@@ -1,0 +1,115 @@
+* {
+	box-sizing: border-box;
+}
+
+.form__group, .row {
+	margin: 0 -15px;
+}
+
+.form__group-btn {
+	margin-top: 10px;
+}
+
+.form__group:before, .form__group:after
+.row:before, .row:after {
+	content: '';
+  	clear: both;
+  	display: block;
+  	width: 100%;
+}
+
+.col {
+  	box-sizing: border-box;
+  	float: left;
+	padding: 0 15px;
+}
+
+.col-1 {
+	width: 8.333333333333332%
+}
+
+.col-2 {
+	width: 16.666666666666664%;
+}
+
+.col-3 {
+	width: 25%;
+}
+
+.col-4 {
+	width: 33.33333333333333%;
+}
+
+.col-5 {
+	width: 41.66666666666667%;
+}
+
+.col-6 {
+	width: 50%;
+}
+
+.col-7 {
+	width: 58.333333333333336%;
+}
+
+.col-8 {
+	width: 66.66666666666666%;
+}
+
+.col-9 {
+	width: 75%;
+}
+
+.col-10 {
+	width: 83.33333333333334%;
+}
+
+.col-11 {
+	width: 91.66666666666666%;
+}
+
+.col-12 {
+	width: 100%;
+}
+
+.btn:focus {
+	outline: none;
+}
+
+.header, .page {
+	position: relative;
+	width: 100%;
+}
+
+.page {
+	padding-top: 60px; 
+}
+
+.b-table {
+  	overflow: auto;
+	width: 100%;
+}
+
+.b-form {
+  position: relative;
+  display: inline-block;
+  max-width: 1200px;
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-control {
+  width: 100%;
+}
+
+input[type="text"], input[type="password"] {
+  height: 30px;
+}
+
+.textarea {
+  resize: none;
+}
