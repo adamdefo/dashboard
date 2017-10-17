@@ -63,7 +63,7 @@ class DB extends DBconfig {
 	}
 	
 	public function GetListItems($tbl, $filter_field, $filter_value, $order_field='id', $order_type='ASC', $start=0, $limit=null) {
-		if($filter_field == null):
+		if($filter_field === null):
 			 $this -> sqlQuery = "SELECT * FROM $tbl ORDER BY $order_field $order_type";
 		else:
 			if($limit == null) {
@@ -72,7 +72,21 @@ class DB extends DBconfig {
 				$this -> sqlQuery = "SELECT * FROM $tbl WHERE $filter_field=$filter_value ORDER BY $order_field $order_type LIMIT $start, $limit";
 			}
 		endif;
-				
+
+		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
+		return $this -> FetchDataInArray($data);
+	}
+
+	/** 
+	 * Получает сгруппированные данные по date_stamp
+	 */
+	public function GetGroupedListItems($tbl) {
+		$this -> sqlQuery = "SELECT * FROM $tbl AS res, 
+		(SELECT value, MAX(date_stamp) AS date FROM $tbl 
+		GROUP BY value) AS res2 
+		WHERE res.value = res2.value AND res.date_stamp = res2.date 
+		ORDER BY id DESC";
+
 		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
 		return $this -> FetchDataInArray($data);
 	}
@@ -83,30 +97,30 @@ class DB extends DBconfig {
 	* $value - значение, которое приходит в $_GET 
 	*/
 	public function GetItem($tbl, $value, $field='id') {
-			if(is_string($value)):
-				$this -> sqlQuery = "SELECT * FROM $tbl WHERE $field='$value'";
-			else:
-				$this -> sqlQuery = "SELECT * FROM $tbl WHERE $field=$value";
-			endif;
-					
-			$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
-			return mysql_fetch_array($data);
+		if(is_string($value)):
+			$this -> sqlQuery = "SELECT * FROM $tbl WHERE $field='$value'";
+		else:
+			$this -> sqlQuery = "SELECT * FROM $tbl WHERE $field=$value";
+		endif;
+
+		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
+		return mysql_fetch_array($data);
 	}
 
 	/** Получает количество элементов в таблице
 	* $tbl - имя таблицы
 	*/
 	public function GetCountItems($tbl) {	
-			$this -> sqlQuery = "SELECT COUNT(*) FROM $tbl";
-					
-			$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
-			$row = mysql_fetch_array($data);
-					
-			return $row;
+		$this -> sqlQuery = "SELECT COUNT(*) FROM $tbl";
+
+		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
+		$row = mysql_fetch_array($data);
+
+		return $row;
 	}
-		
+
 	public function foo() {
 		echo 'foo';
 	}
-		
+
 }

@@ -26,28 +26,27 @@ switch($view) {
 
 	case('commutators'):
 		$title = 'Коммутаторы';
-    
-    	if(isset($_GET['action']) && $_GET['action'] !== ''):
+	
+		if(isset($_GET['action']) && $_GET['action'] !== ''):
+			$CONNECTION_TYPE = $DB -> GetListItems('DIR_CONNECTION_TYPE');
+			$COMMUTATOR_STATUS = $DB -> GetListItems('DIR_COMMUTATOR_STATUS');
 
-    		$CONNECTION_TYPE = $DB -> GetListItems('DIR_CONNECTION_TYPE');
-            $COMMUTATOR_STATUS = $DB -> GetListItems('DIR_COMMUTATOR_STATUS');
-
-    		switch($_GET['action']) {
-            	case('add'):
+			switch($_GET['action']) {
+				case('add'):
 					$action = 'add';
 				break;
-                case('edit'):
-                	$action = 'edit';
-                	if(isset($_GET['id']) && $_GET['id'] !== ''):
-                		$item = $DB -> GetItem('COMMUTATORS', $_GET['id']);
-                	else:
-                		$item = $DB -> GetItem('COMMUTATORS', 1);
-                	endif;
+				case('edit'):
+					$action = 'edit';
+					if(isset($_GET['id']) && $_GET['id'] !== ''):
+						$item = $DB -> GetItem('COMMUTATORS', $_GET['id']);
+					else:
+						$item = $DB -> GetItem('COMMUTATORS', 1);
+					endif;
 				break;
-            }
-    	else:
-    		$items = $DB -> GetListItems('COMMUTATORS');
-    	endif;
+			}
+		else:
+			$items = $DB -> GetGroupedListItems('COMMUTATORS');
+		endif;
 	break;
 
 	case('users'):

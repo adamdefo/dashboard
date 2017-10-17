@@ -1,6 +1,6 @@
 <h1><?=$title;?></h1>
 
-<?if(isset($_GET['action']) && $_GET['action'] !== ''):?>
+<?if(isset($_GET['action']) && $_GET['action'] !== '' && $_GET['action'] !== 'delete'):?>
 
 <p>Action: <?=$_GET['action'];?></p>
 <p>ID: <?=$_GET['id'];?></p>
@@ -27,7 +27,7 @@
 				<div class="form__group row">
 					<div class="col col-8">
 						<label>Адрес</label>
-						<input class="form-control" name="adress" type="text" value="<?=$item['adress']?>" />
+						<input class="form-control" name="adress" type="text" value="<?=$item['adress'] ? $item['adress'] : 'адрес';?>" />
 					</div>
 					<div class="col col-1">
 						<label>Сегмент</label>
@@ -69,16 +69,19 @@
 			</div>
 			<div class="col col-2">
 				<div class="form__group row">
-                  <div class="col col-12">
+					<div class="col col-12">
 						<label>ID</label>
-						<input class="form-control" name="value" type="text" value="<?=$item['value']?>" <?if($_GET['action'] !== 'add'):?>disabled<?endif;?> />
+<input class="form-control" <?if($_GET['action'] === 'add'):?>name="value"<?endif;?> type="text" value="<?=$item['value']?>" <?if($_GET['action'] !== 'add'):?>disabled<?endif;?> />
+						<?if($_GET['action'] !== 'add'):?>
+						<input class="form-control" name="value" type="hidden" value="<?=$item['value']?>" />
+						<?endif?>
 					</div>
-              </div>
-              <div class="form__group row">
+				</div>
+				<div class="form__group row">
 					<div class="col col-12">
 						<label>Дата </label>
 						<input class="form-control" type="text" value="<?=date('Y-m-d H:i:s');?>" disabled />
-                      <input name="date_stamp" type="hidden" value="<?=date('Y-m-d H:i:s');?>" />
+						<input name="date_stamp" type="hidden" value="<?=date('Y-m-d H:i:s');?>" />
 					</div>
 				</div>
 				<div class="form__group row">
@@ -86,33 +89,37 @@
 						<label>Тип соединения</label>
 						<select class="form-control" name="connection_type_ID">
 							<option value="0">нет</option>
-                          	<?foreach($CONNECTION_TYPE as $type):?>
-                          	<option value="<?=$type['id']?>" <?if($type['id'] === $item['connection_type_ID']):?>selected<?endif;?>><?=$type['name']?></option>
-                          	<?endforeach;?>
+							<?foreach($CONNECTION_TYPE as $type):?>
+							<option value="<?=$type['id']?>" <?if($type['id'] === $item['connection_type_ID']):?>selected<?endif;?>><?=$type['name']?></option>
+							<?endforeach;?>
 						</select>
 					</div>
-              </div>
-              <div class="form__group row">
+				</div>
+				<div class="form__group row">
 					<div class="col col-12">
 						<label>Статус</label>
 						<select class="form-control" name="status_ID">
 							<?foreach($COMMUTATOR_STATUS as $status):?>
-                          	<option value="<?=$status['id']?>" <?if($status['id'] === $item['status_ID']):?>selected<?endif;?>><?=$status['name']?></option>
-                          	<?endforeach;?>
+							<option value="<?=$status['id']?>" <?if($status['id'] === $item['status_ID']):?>selected<?endif;?>><?=$status['name']?></option>
+							<?endforeach;?>
 						</select>
 					</div>
 				</div>
-              <div class="form__group form__group-btn row">
-                <div class="col col-12">
-                	<button type="submit" class="btn btn-success js-save">Сохранить</button>
-                </div>
-              </div>
+				<div class="form__group form__group-btn row">
+					<div class="col col-12">
+						<button type="submit" class="btn btn-success js-save">Сохранить</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</form>
 </div>
 
 <?else:?>
+
+<? //echo '<pre>';?>
+<? //print_r($items);?>
+<? //echo '</pre>';?>
 
 <div class="b-table">
 	<a href="index.php?view=commutators&action=add" class="btn btn-primary">Создать</a>
@@ -138,7 +145,10 @@
 		<tbody>
 		<?foreach($items as $item):?>
 			<tr>
-				<td><a href="index.php?view=commutators&action=edit&id=<?=$item['id'];?>"><?=$item['value'];?></a></td>
+				<td>
+					<a href="index.php?view=commutators&action=edit&id=<?=$item['id'];?>"><?=$item['value'];?></a>
+					<a href="api/commutator.php?action=delete&id=<?=$item['id'];?>" class="btn btn-small btn-danger">Удалить</a>
+				</td>
 				<td><?=$item['model']?></td>
 				<td><?=$item['ip']?></td>
 				<td><?=$item['firmware']?></td>
