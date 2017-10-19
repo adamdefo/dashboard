@@ -18,6 +18,29 @@ switch($view) {
 
 	case('tasks'):
 		$title = 'Задачи';
+
+		if(isset($_GET['action']) && $_GET['action'] !== ''):
+			$COMMUTATOR_STATUS = $DB -> GetListItems('DIR_COMMUTATOR_STATUS');
+			$LIST_OBJECT = $DB -> GetListItemsNoClone('COMMUTATORS', 'value');
+
+			switch($_GET['action']) {
+				case('add'):
+					$title = 'Создание задачи';
+					$action = 'add';
+				break;
+				case('edit'):
+					$action = 'edit';
+					if(isset($_GET['id']) && $_GET['id'] !== ''):
+						$item = $DB -> GetItem('TASKS', $_GET['id']);
+						$title = 'Обновление задачи '.$item['name'];
+					else:
+						$item = $DB -> GetItem('TASKS', 1);
+					endif;
+				break;
+			}
+		else:
+			$items = $DB -> GetGroupedListItems('TASKS','date_last_update');
+		endif;
 	break;
 
 	case('clients'):
@@ -33,19 +56,21 @@ switch($view) {
 
 			switch($_GET['action']) {
 				case('add'):
+					$title = 'Создание коммутатора';
 					$action = 'add';
 				break;
 				case('edit'):
 					$action = 'edit';
 					if(isset($_GET['id']) && $_GET['id'] !== ''):
 						$item = $DB -> GetItem('COMMUTATORS', $_GET['id']);
+						$title = 'Обновление коммутатора '.$item['value'];
 					else:
 						$item = $DB -> GetItem('COMMUTATORS', 1);
 					endif;
 				break;
 			}
 		else:
-			$items = $DB -> GetGroupedListItems('COMMUTATORS');
+			$items = $DB -> GetGroupedListItems('COMMUTATORS','date_last_update');
 		endif;
 	break;
 

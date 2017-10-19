@@ -15,10 +15,10 @@ endif;
 // удаление
 if(isset($_GET['action'])):
 	$action = $_GET['action'];
+	$id = $_GET['id'];
 endif;
 
 if($action === 'add' || $action === 'edit'):
-	$value = $_POST['value'];
 	$model = $_POST['model'];
 	$adress = $_POST['adress'];
 	$ip = $_POST['ip'];
@@ -32,19 +32,25 @@ if($action === 'add' || $action === 'edit'):
 	$note = $_POST['note'];
 	$note_open = $_POST['note_open'];
 	$comment = $_POST['comment'];
-	$date_stamp = $_POST['date_stamp'];
+	$date_created = $_POST['date_created'];
 endif;
 
 $sqlQuery = "";
 switch($action) {
 	case('add'):
-		$sqlQuery = "INSERT INTO COMMUTATORS (value,model,adress,ip,segment,firmware,parent_ID,parent_PORT,connection_type_ID,count_client_ports,status_ID,note,note_open,comment,date_stamp) VALUES ('$value','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$count_client_ports','$status_ID','$note','$note_open','$comment','$date_stamp')";
+		$countUniqueItems = $DB -> GetCountUniqueItems('TASKS','value');
+		$value = ++$countUniqueItems[0]['quantity'];
+		$date_last_update = NULL;
+		$sqlQuery = "INSERT INTO COMMUTATORS (value,model,adress,ip,segment,firmware,parent_ID,parent_PORT,connection_type_ID,count_client_ports,status_ID,note,note_open,comment,date_created,date_last_update) 
+		VALUES ('$value','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$count_client_ports','$status_ID','$note','$note_open','$comment','$date_created','$date_last_update')";
 	break;
 	case('edit'):
-		$sqlQuery = "INSERT INTO COMMUTATORS (value,model,adress,ip,segment,firmware,parent_ID,parent_PORT,connection_type_ID,count_client_ports,status_ID,note,note_open,comment,date_stamp) VALUES ('$value','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$count_client_ports','$status_ID','$note','$note_open','$comment','$date_stamp')";
+		$value = $_POST['value'];
+		$date_last_update = date('Y-m-d H:i:s');
+		$sqlQuery = "INSERT INTO COMMUTATORS (value,model,adress,ip,segment,firmware,parent_ID,parent_PORT,connection_type_ID,count_client_ports,status_ID,note,note_open,comment,date_created,date_last_update) 
+		VALUES ('$value','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$count_client_ports','$status_ID','$note','$note_open','$comment','$date_created','$date_last_update')";
 	break;
 	case('delete'):
-		$id = $_GET['id'];
 		$sqlQuery = "DELETE FROM COMMUTATORS WHERE id='$id'";
 	break;
 	default:

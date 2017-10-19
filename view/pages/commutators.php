@@ -69,19 +69,19 @@
 			</div>
 			<div class="col col-2">
 				<div class="form__group row">
+					<?if($_GET['action'] !== 'add'):?>
 					<div class="col col-12">
 						<label>ID</label>
-<input class="form-control" <?if($_GET['action'] === 'add'):?>name="value"<?endif;?> type="text" value="<?=$item['value']?>" <?if($_GET['action'] !== 'add'):?>disabled<?endif;?> />
-						<?if($_GET['action'] !== 'add'):?>
+						<input class="form-control" type="text" value="<?=$item['value']?>" disabled />
 						<input class="form-control" name="value" type="hidden" value="<?=$item['value']?>" />
-						<?endif?>
 					</div>
+					<?endif?>
 				</div>
 				<div class="form__group row">
 					<div class="col col-12">
-						<label>Дата </label>
-						<input class="form-control" type="text" value="<?=date('Y-m-d H:i:s');?>" disabled />
-						<input name="date_stamp" type="hidden" value="<?=date('Y-m-d H:i:s');?>" />
+						<label>Дата создания</label>
+						<input class="form-control" type="text" value="<?=$_GET['action'] === 'add' ? date('Y-m-d H:i:s') : $item['date_created'];?>" disabled />
+						<input name="date_created" type="hidden" value="<?=$_GET['action'] === 'add' ? date('Y-m-d H:i:s') : $item['date_created'];?>" />
 					</div>
 				</div>
 				<div class="form__group row">
@@ -139,7 +139,8 @@
 				<th>Примечание</th>
 				<th>Откр. примечание</th>
 				<th>Комментарий</th>
-				<th>Дата создания</th>
+				<th>Создано</th>
+				<th>Последнее обновление</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -161,7 +162,8 @@
 				<td><?=$item['note']?></td>
 				<td><?=$item['note_open']?></td>
 				<td><?=$item['comment']?></td>
-				<td><?=$item['date_stamp']?></td>
+				<td><?=$item['date_created']?></td>
+				<td><?=$item['date_last_update']?></td>
 			</tr>
 		<?endforeach;?>
 		</tbody>

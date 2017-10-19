@@ -2,6 +2,15 @@
 	box-sizing: border-box;
 }
 
+.dropdown-menu .divider {
+	border: 0;
+	margin: 5px;
+}
+
+.nav li + .nav-header {
+	margin-top: 0;
+}
+
 .form__group, .row {
 	margin: 0 -15px;
 }
@@ -13,14 +22,13 @@
 .form__group:before, .form__group:after
 .row:before, .row:after {
 	content: '';
-  	clear: both;
-  	display: block;
-  	width: 100%;
+	clear: both;
+	display: block;
+	width: 100%;
 }
 
 .col {
-  	box-sizing: border-box;
-  	float: left;
+	float: left;
 	padding: 0 15px;
 }
 
@@ -86,30 +94,30 @@
 }
 
 .b-table {
-  	overflow: auto;
+	overflow: auto;
 	width: 100%;
 }
 
 .b-form {
-  position: relative;
-  display: inline-block;
-  max-width: 1200px;
+	position: relative;
+	display: inline-block;
+	max-width: 1200px;
 }
 
 label {
-  display: inline-block;
-  margin-bottom: 5px;
-  font-weight: bold;
+	display: inline-block;
+	margin-bottom: 5px;
+	font-weight: bold;
 }
 
 .form-control {
-  width: 100%;
+	width: 100%;
 }
 
 input[type="text"], input[type="password"] {
-  height: 30px;
+	height: 30px;
 }
 
 .textarea {
-  resize: none;
+	resize: none;
 }

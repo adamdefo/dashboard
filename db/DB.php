@@ -79,14 +79,35 @@ class DB extends DBconfig {
 
 	/** 
 	 * Получает сгруппированные данные по date_stamp
+	 * $field_date - поле, по которому выбирается самая новая запись
 	 */
-	public function GetGroupedListItems($tbl) {
+	public function GetGroupedListItems($tbl,$field_date) {
 		$this -> sqlQuery = "SELECT * FROM $tbl AS res, 
-		(SELECT value, MAX(date_stamp) AS date FROM $tbl 
+		(SELECT value, MAX($field_date) AS date FROM $tbl 
 		GROUP BY value) AS res2 
-		WHERE res.value = res2.value AND res.date_stamp = res2.date 
+		WHERE res.value = res2.value AND res.$field_date = res2.date 
 		ORDER BY id DESC";
 
+		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
+		return $this -> FetchDataInArray($data);
+	}
+
+	/** 
+	* Получает список без повторов
+	*/
+	public function GetListItemsNoClone($tbl, $field) {
+		$this -> sqlQuery = "SELECT DISTINCT $field FROM $tbl";
+
+		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
+		return $this -> FetchDataInArray($data);
+	}
+	
+	/** 
+	* Количество уникальных записей
+	*/
+	public function GetCountUniqueItems($tbl, $field) {
+		$this -> sqlQuery = "SELECT COUNT(DISTINCT $field) AS quantity FROM $tbl";
+ 
 		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
 		return $this -> FetchDataInArray($data);
 	}
