@@ -33,9 +33,9 @@
 				<div class="form__group row">
 					<?if($_GET['action'] !== 'add'):?>
 					<div class="col col-12">
-						<label>ID</label>
-						<input class="form-control" type="text" value="<?=$item['value']?>" disabled />
-						<input class="form-control" name="value" type="hidden" value="<?=$item['value']?>" />
+						<label>UID</label>
+						<input class="form-control" type="text" value="<?=$item['UID']?>" disabled />
+						<input class="form-control" name="UID" type="hidden" value="<?=$item['UID']?>" />
 					</div>
 					<?endif?>
 				</div>
@@ -46,7 +46,19 @@
 						<select class="form-control" name="object_ID">
 							<option value="0">нет</option>
 							<?foreach($LIST_OBJECT as $obj):?>
-							<option value="<?=$obj['value']?>" <?if($obj['value'] === $item['object_ID']):?>selected<?endif;?>><?=$obj['value']?></option>
+							<option value="<?=$obj['UID']?>" <?if($obj['UID'] === $item['object_ID']):?>selected<?endif;?>><?=$obj['UID']?></option>
+							<?endforeach;?>
+						</select>
+					</div>
+				</div>
+
+				<div class="form__group row">
+					<div class="col col-12">
+						<label>Исполнитель</label>
+						<select class="form-control" name="user_ID">
+							<option value="0">не назначен</option>
+							<?foreach($implementers as $impl):?>
+							<option value="<?=$impl['id']?>" <?if($impl['id'] === $item['user_ID']):?>selected<?endif;?>><?=$impl['id']?></option>
 							<?endforeach;?>
 						</select>
 					</div>
@@ -88,26 +100,27 @@
 	<table class="table table-striped table-hover">
 		<thead>
 			<tr>
-				<th>#</th>
+				<th>Удалить</th>
 				<th>Наименование</th>
 				<th>Менеджер</th>
+				<th>Исполнитель</th>
 				<th>ID объекта</th>
 				<th>Статус</th>
 				<th>Описание</th>
 				<th>Отчёт</th>
-				<th>Cоздано</th>
-				<th>Последнее обновление</th>
+				<th>Cоздан</th>
+				<th>Обновлен</th>
 			</tr>
 		</thead>
 		<tbody>
 		<?foreach($items as $item):?>
 			<tr>
 				<td>
-					<a href="index.php?view=tasks&action=edit&id=<?=$item['id'];?>"><?=$item['value'];?></a>
 					<a href="api/task.php?action=delete&id=<?=$item['id'];?>" class="btn btn-small btn-danger">Удалить</a>
 				</td>
-				<td><?=$item['name']?></td>
+				<td><a href="index.php?view=tasks&action=edit&id=<?=$item['id'];?>">#<?=$item['UID'];?>:<?=$item['name']?></a></td>
 				<td><?=$item['manager']?></td>
+				<td><?=$item['user_ID']?></td>
 				<td><?=$item['object_ID']?></td>
 				<td><?=$item['status_ID']?></td>
 				<td><?=$item['description']?></td>

@@ -2,9 +2,6 @@
 
 <?if(isset($_GET['action']) && $_GET['action'] !== '' && $_GET['action'] !== 'delete'):?>
 
-<p>Action: <?=$_GET['action'];?></p>
-<p>ID: <?=$_GET['id'];?></p>
-
 <div class="b-form">
 	<form class="form" action="api/commutator.php?action=<?=$_GET['action'];?>" method="POST">
 		<div class="row">
@@ -16,11 +13,11 @@
 					</div>
 					<div class="col col-4">
 						<label>IP</label>
-						<input class="form-control" name="ip" type="text" value="<?=$item['ip']?>" />
+						<input class="form-control" name="ip" type="text" value="<?=$item['ip'] ? $item['ip'] : '192.168.0.1';?>" />
 					</div>
 					<div class="col col-4">
 						<label>Прошивка</label>
-						<input class="form-control" name="firmware" type="text" value="<?=$item['firmware']?>" />
+						<input class="form-control" name="firmware" type="text" value="<?=$item['firmware'] ? $item['firmware'] : 'прошивка';?>" />
 					</div>
 				</div>
 					
@@ -41,14 +38,14 @@
 					
 				<div class="form__group row">
 					<div class="col col-6">
-						<label>Родительский коммутатор</label><?=$item['parent_ID']?>
+						<label>Родительский коммутатор</label>
 						<select class="form-control" name="parent_ID">
 							<option value="0">нет</option>
 						</select>
 					</div>
 					<div class="col col-6">
 						<label>Родительский порт</label>
-						<input class="form-control" name="parent_PORT" type="text" value="<?=$item['parent_PORT']?>" />
+						<input class="form-control" name="parent_PORT" type="text" value="<?=$item['parent_PORT'] ? $item['parent_PORT'] : '0';?>" />
 					</div>
 				</div>
 
@@ -71,9 +68,9 @@
 				<div class="form__group row">
 					<?if($_GET['action'] !== 'add'):?>
 					<div class="col col-12">
-						<label>ID</label>
-						<input class="form-control" type="text" value="<?=$item['value']?>" disabled />
-						<input class="form-control" name="value" type="hidden" value="<?=$item['value']?>" />
+						<label>UID</label>
+						<input class="form-control" type="text" value="<?=$item['UID']?>" disabled />
+						<input class="form-control" name="UID" type="hidden" value="<?=$item['UID']?>" />
 					</div>
 					<?endif?>
 				</div>
@@ -86,7 +83,7 @@
 				</div>
 				<div class="form__group row">
 					<div class="col col-12">
-						<label>Тип соединения</label>
+						<label>Тип подключения</label>
 						<select class="form-control" name="connection_type_ID">
 							<option value="0">нет</option>
 							<?foreach($CONNECTION_TYPE as $type):?>
@@ -117,45 +114,42 @@
 
 <?else:?>
 
-<? //echo '<pre>';?>
-<? //print_r($items);?>
-<? //echo '</pre>';?>
-
 <div class="b-table">
 	<a href="index.php?view=commutators&action=add" class="btn btn-primary">Создать</a>
 	<table class="table table-striped table-hover">
 		<thead>
 			<tr>
-				<th>#</th>
+				<th>UID</th>
 				<th>Модель</th>
 				<th>IP</th>
 				<th>Прошивка</th>
 				<th>Адрес</th>
 				<th>Род. коммутатор</th>
-				<th>Род. порт</th>
-				<th>Тип соединения</th>
+				<th>Сегмент</th>
+				<th>Тип подключения</th>
 				<th>Кол-во портов</th>
 				<th>Статус</th>
 				<th>Примечание</th>
 				<th>Откр. примечание</th>
 				<th>Комментарий</th>
-				<th>Создано</th>
-				<th>Последнее обновление</th>
+				<th>Создан</th>
+				<th>Обновлен</th>
 			</tr>
 		</thead>
 		<tbody>
 		<?foreach($items as $item):?>
 			<tr>
 				<td>
-					<a href="index.php?view=commutators&action=edit&id=<?=$item['id'];?>"><?=$item['value'];?></a>
-					<a href="api/commutator.php?action=delete&id=<?=$item['id'];?>" class="btn btn-small btn-danger">Удалить</a>
+					<a href="index.php?view=commutators&action=edit&id=<?=$item['id'];?>"><?=$item['UID'];?></a>
+					<a href="index.php?view=commutators&action=edit&id=<?=$item['id'];?>" class="btn btn-small btn-primary">Изменить</a>
+					<!-- <a href="api/commutator.php?action=delete&id=<?=$item['id'];?>" class="btn btn-small btn-danger">Удалить</a> -->
 				</td>
 				<td><?=$item['model']?></td>
 				<td><?=$item['ip']?></td>
 				<td><?=$item['firmware']?></td>
 				<td><?=$item['adress']?></td>
 				<td><?=is_null($item['parent_ID']) ? 'нет' : $item['parent_ID'];?></td>
-				<td><?=$item['parent_PORT']?></td>
+				<td><?=$item['segment']?></td>
 				<td><?=$item['connection_type_ID']?></td>
 				<td><?=$item['count_client_ports']?></td>
 				<td><?=$item['status_ID']?></td>

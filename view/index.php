@@ -35,10 +35,9 @@
 						<a class="brand" href="#">Мониторинг</a>
 						<div class="nav-collapse collapse">
 							<ul class="nav">
-								<li class="active"><a href="index.php?view=tasks">Задачи</a></li>
-								<li><a href="index.php?view=clients">Клиенты</a></li>
-								<li><a href="index.php?view=commutators">Коммутаторы</a></li>
-								<li><a href="index.php?view=users">Пользователи</a></li>
+								<?foreach($mainMenu as $link):?>
+<li <?if($_GET['view'] === $link['url']):?>class="active"<?endif;?>><a href="index.php?view=<?=$link['url']?>"><?=$link['name']?></a></li>
+								<?endforeach;?>
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Справочники <b class="caret"></b></a>
 									<ul class="dropdown-menu">
@@ -52,11 +51,11 @@
 									</ul>
 								</li>
 							</ul>
-							<form class="navbar-form pull-right">
+							<!-- <form class="navbar-form pull-right">
 								<input class="span2" type="text" name="login" placeholder="Логин">
 								<input class="span2" type="password" name="password" placeholder="Пароль">
 								<button type="submit" class="btn btn-primary">Войти</sup>
-							</form>
+							</form> -->
 						</div>
 					</div>
 				</div>

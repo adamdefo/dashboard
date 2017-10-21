@@ -49,7 +49,7 @@ class DB extends DBconfig {
 		$this -> dbUserPass = NULL;
 	}
 	
-	private function FetchDataInArray($result) {
+	public function FetchDataInArray($result) {
 		$arr = array();
 		$count = 0;
 
@@ -62,7 +62,7 @@ class DB extends DBconfig {
 		return $arr;
 	}
 	
-	public function GetListItems($tbl, $filter_field, $filter_value, $order_field='id', $order_type='ASC', $start=0, $limit=null) {
+	public function GetListItems($tbl, $order_field='id', $order_type='ASC', $filter_field, $filter_value, $start=0, $limit=null) {
 		if($filter_field === null):
 			 $this -> sqlQuery = "SELECT * FROM $tbl ORDER BY $order_field $order_type";
 		else:
@@ -79,13 +79,14 @@ class DB extends DBconfig {
 
 	/** 
 	 * Получает сгруппированные данные по date_stamp
-	 * $field_date - поле, по которому выбирается самая новая запись
+	 * $uid - уникальное идентификатор, чтобы выбрать повторяющиеся записи и среди них выбрать актуальную
+	 * $field_date - поле с датой, по которой будет выбираться самая актуальная запись
 	 */
-	public function GetGroupedListItems($tbl,$field_date) {
+	public function GetGroupedListItems($tbl, $uid = 'UID', $field_date = 'date_last_update') {
 		$this -> sqlQuery = "SELECT * FROM $tbl AS res, 
-		(SELECT value, MAX($field_date) AS date FROM $tbl 
-		GROUP BY value) AS res2 
-		WHERE res.value = res2.value AND res.$field_date = res2.date 
+		(SELECT $uid, MAX($field_date) AS date FROM $tbl 
+		GROUP BY $uid) AS res2 
+		WHERE res.$uid = res2.$uid AND res.$field_date = res2.date 
 		ORDER BY id DESC";
 
 		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
@@ -95,7 +96,7 @@ class DB extends DBconfig {
 	/** 
 	* Получает список без повторов
 	*/
-	public function GetListItemsNoClone($tbl, $field) {
+	public function GetListItemsNoClone($tbl, $field = 'UID') {
 		$this -> sqlQuery = "SELECT DISTINCT $field FROM $tbl";
 
 		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
@@ -105,14 +106,14 @@ class DB extends DBconfig {
 	/** 
 	* Количество уникальных записей
 	*/
-	public function GetCountUniqueItems($tbl, $field) {
+	public function GetCountUniqueItems($tbl, $field = 'UID') {
 		$this -> sqlQuery = "SELECT COUNT(DISTINCT $field) AS quantity FROM $tbl";
  
 		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
 		return $this -> FetchDataInArray($data);
 	}
 
-	/** Выборка одного элемента
+	/** Выбирает один элемент из таблицы
 	* $tbl - название таблицы, принимает
 	* $field - поле таблицы, по которому искать
 	* $value - значение, которое приходит в $_GET 
@@ -135,13 +136,14 @@ class DB extends DBconfig {
 		$this -> sqlQuery = "SELECT COUNT(*) FROM $tbl";
 
 		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
-		$row = mysql_fetch_array($data);
-
-		return $row;
+		return mysql_fetch_array($data);
 	}
 
-	public function foo() {
-		echo 'foo';
+	/** Выполняет любой запрос
+	 * $query - запрос
+	 */
+	public function ExecuteQuery($query) {
+		return mysql_query($query, $this -> CreateConnect());
 	}
 
 }

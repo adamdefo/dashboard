@@ -11,6 +11,8 @@ $view = empty($_GET['view']) ? 'index' : $_GET['view'];
 $view = stripslashes($view);
 $view = strip_tags($view);
 
+$mainMenu = $DB -> GetListItems('MENU'); // главное меню
+
 switch($view) {
 	case('index'):
 		$title = 'Главная';
@@ -20,9 +22,8 @@ switch($view) {
 		$title = 'Задачи';
 
 		if(isset($_GET['action']) && $_GET['action'] !== ''):
-			$COMMUTATOR_STATUS = $DB -> GetListItems('DIR_COMMUTATOR_STATUS');
-			$LIST_OBJECT = $DB -> GetListItemsNoClone('COMMUTATORS', 'value');
-
+			$COMMUTATOR_STATUS = $DB -> GetListItems('DIR_TASK_STATUS');
+			$LIST_OBJECT = $DB -> GetListItemsNoClone('COMMUTATORS');
 			switch($_GET['action']) {
 				case('add'):
 					$title = 'Создание задачи';
@@ -31,7 +32,8 @@ switch($view) {
 				case('edit'):
 					$action = 'edit';
 					if(isset($_GET['id']) && $_GET['id'] !== ''):
-						$item = $DB -> GetItem('TASKS', $_GET['id']);
+						$id = $_GET['id'];
+						$item = $DB -> GetItem('TASKS', $id);
 						$title = 'Обновление задачи '.$item['name'];
 					else:
 						$item = $DB -> GetItem('TASKS', 1);
@@ -39,12 +41,39 @@ switch($view) {
 				break;
 			}
 		else:
-			$items = $DB -> GetGroupedListItems('TASKS','date_last_update');
+			$query = "SELECT * FROM TASKS AS res, 
+			(SELECT UID, MAX(date_last_update) AS date FROM TASKS 
+			GROUP BY UID) AS res2 
+			WHERE res.UID = res2.UID AND res.date_last_update = res2.date 
+			ORDER BY id DESC";
+
+			$items = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
 		endif;
 	break;
 
 	case('clients'):
 		$title = 'Клиенты';
+
+		if(isset($_GET['action']) && $_GET['action'] !== ''):
+			$CONNECTION_TYPE = $DB -> GetListItems('DIR_CONNECTION_TYPE');
+			switch($_GET['action']) {
+				case('add'):
+					$title = 'Создание клиента';
+					$action = 'add';
+				break;
+				case('edit'):
+					$action = 'edit';
+					if(isset($_GET['id']) && $_GET['id'] !== ''):
+						$item = $DB -> GetItem('CLIENTS', $_GET['id']);
+						$title = 'Обновление клиента '.$item['full_name'];
+					else:
+						$item = $DB -> GetItem('CLIENTS', 1);
+					endif;
+				break;
+			}
+		else:
+			$items = $DB -> GetGroupedListItems('CLIENTS');
+		endif;
 	break;
 
 	case('commutators'):
@@ -63,20 +92,109 @@ switch($view) {
 					$action = 'edit';
 					if(isset($_GET['id']) && $_GET['id'] !== ''):
 						$item = $DB -> GetItem('COMMUTATORS', $_GET['id']);
-						$title = 'Обновление коммутатора '.$item['value'];
+						$title = 'Обновление коммутатора '.$item['model'].' | '.$item['UID'];
 					else:
 						$item = $DB -> GetItem('COMMUTATORS', 1);
 					endif;
 				break;
 			}
 		else:
-			$items = $DB -> GetGroupedListItems('COMMUTATORS','date_last_update');
+			$items = $DB -> GetGroupedListItems('COMMUTATORS');
 		endif;
 	break;
 
 	case('users'):
 		$title = 'Пользователи';
 
+		if(isset($_GET['action']) && $_GET['action'] !== ''):
+			$ROLES= $DB -> GetListItems('USERS_ROLES', 'id', 'DESC');
+			switch($_GET['action']) {
+				case('add'):
+					$title = 'Создание пользователя';
+					$action = 'add';
+				break;
+				case('edit'):
+					$action = 'edit';
+					if(isset($_GET['id']) && $_GET['id'] !== ''):
+						$id = $_GET['id'];
+						$item = $DB -> GetItem('USERS', $id);
+						$title = 'Редактирование пользователя '.$item['fio'];
+					else:
+						$item = $DB -> GetItem('USERS', 1);
+					endif;
+				break;
+			}
+		else:
+			$items = $DB -> GetListItems('USERS');
+		endif;
+
+	break;
+
+	case('ip_adress'):
+		$title = 'IP адреса';
+
+		if(isset($_GET['action']) && $_GET['action'] !== ''):
+			$clients = $DB -> GetGroupedListItems('CLIENTS');
+			$VLAN = $DB -> GetGroupedListItems('VLAN');
+
+			switch($_GET['action']) {
+				case('add'):
+					$title = 'Создать IP адрес';
+					$action = 'add';
+				break;
+				case('edit'):
+					$action = 'edit';
+					if(isset($_GET['id']) && $_GET['id'] !== ''):
+						$id = $_GET['id'];
+						$item = $DB -> GetItem('IP_ADRESS', $id);
+						$title = 'Обновление IP: '.$item['ip'];
+					else:
+						$item = $DB -> GetItem('IP_ADRESS', 1);
+					endif;
+				break;
+			}
+		else:
+			$query = "SELECT * FROM IP_ADRESS AS res, 
+			(SELECT UID, MAX(date_last_update) AS date FROM IP_ADRESS 
+			GROUP BY UID) AS res2 
+			WHERE res.UID = res2.UID AND res.date_last_update = res2.date 
+			ORDER BY id DESC";
+
+			$items = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
+		endif;
+	break;
+
+	case('vlan'):
+		$title = 'VLAN';
+
+		if(isset($_GET['action']) && $_GET['action'] !== ''):
+			$clients = $DB -> GetGroupedListItems('CLIENTS');
+
+			switch($_GET['action']) {
+				case('add'):
+					$title = 'Создать VLAN';
+					$action = 'add';
+				break;
+				case('edit'):
+					$action = 'edit';
+					if(isset($_GET['id']) && $_GET['id'] !== ''):
+						$id = $_GET['id'];
+						$item = $DB -> GetItem('VLAN', $id);
+						$title = 'Обновление VLAN: '.$item['vlan'];
+					else:
+						$item = $DB -> GetItem('VLAN', 1);
+					endif;
+				break;
+			}
+		else:
+			$query = "SELECT * FROM VLAN AS res, 
+			(SELECT UID, MAX(date_last_update) AS date FROM VLAN 
+			GROUP BY UID) AS res2 
+			WHERE res.UID = res2.UID AND res.date_last_update = res2.date 
+			ORDER BY id DESC";
+
+			$items = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
+		endif;
 	break;
 }
 

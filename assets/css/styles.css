@@ -100,7 +100,7 @@
 
 .b-form {
 	position: relative;
-	display: inline-block;
+	/* display: inline-block; */
 	max-width: 1200px;
 }
 

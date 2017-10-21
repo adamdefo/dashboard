@@ -38,17 +38,17 @@ endif;
 $sqlQuery = "";
 switch($action) {
 	case('add'):
-		$countUniqueItems = $DB -> GetCountUniqueItems('TASKS','value');
-		$value = ++$countUniqueItems[0]['quantity'];
-		$date_last_update = NULL;
-		$sqlQuery = "INSERT INTO COMMUTATORS (value,model,adress,ip,segment,firmware,parent_ID,parent_PORT,connection_type_ID,count_client_ports,status_ID,note,note_open,comment,date_created,date_last_update) 
-		VALUES ('$value','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$count_client_ports','$status_ID','$note','$note_open','$comment','$date_created','$date_last_update')";
+		$countUniqueItems = $DB -> GetCountUniqueItems('COMMUTATORS');
+		$UID = ++$countUniqueItems[0]['quantity'];
+		$date_last_update = $date_created;
+		$sqlQuery = "INSERT INTO COMMUTATORS (UID,model,adress,ip,segment,firmware,parent_ID,parent_PORT,connection_type_ID,count_client_ports,status_ID,note,note_open,comment,date_created,date_last_update) 
+		VALUES ('$UID','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$count_client_ports','$status_ID','$note','$note_open','$comment','$date_created','$date_last_update')";
 	break;
 	case('edit'):
-		$value = $_POST['value'];
+		$UID = $_POST['UID'];
 		$date_last_update = date('Y-m-d H:i:s');
-		$sqlQuery = "INSERT INTO COMMUTATORS (value,model,adress,ip,segment,firmware,parent_ID,parent_PORT,connection_type_ID,count_client_ports,status_ID,note,note_open,comment,date_created,date_last_update) 
-		VALUES ('$value','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$count_client_ports','$status_ID','$note','$note_open','$comment','$date_created','$date_last_update')";
+		$sqlQuery = "INSERT INTO COMMUTATORS (UID,model,adress,ip,segment,firmware,parent_ID,parent_PORT,connection_type_ID,count_client_ports,status_ID,note,note_open,comment,date_created,date_last_update) 
+		VALUES ('$UID','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$count_client_ports','$status_ID','$note','$note_open','$comment','$date_created','$date_last_update')";
 	break;
 	case('delete'):
 		$sqlQuery = "DELETE FROM COMMUTATORS WHERE id='$id'";
@@ -58,5 +58,5 @@ switch($action) {
 	break;
 }
 
-$data = mysql_query($sqlQuery, $DB -> CreateConnect());
+$data = $DB -> ExecuteQuery($sqlQuery);
 echo $data ? '<html><head><meta http-equiv="Refresh" content="0; URL=../index.php?view=commutators"></head></html>' : 'fail';
