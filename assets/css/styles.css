@@ -84,6 +84,18 @@
 	outline: none;
 }
 
+.text-left {
+	text-align: left !important;
+}
+
+.text-right {
+	text-align: right !important;
+}
+
+.text-center {
+	text-align: center !important;
+}
+
 .header, .page {
 	position: relative;
 	width: 100%;
@@ -121,3 +133,91 @@ input[type="text"], input[type="password"] {
 .textarea {
 	resize: none;
 }
+
+/* модалка */
+.b-modal {
+	position: fixed;
+	z-index: 10000;
+	top: 0px;
+	left: 0px;
+	height:100%;
+	width:100%;
+	background: rgba(0, 0, 0, .85);
+	display: none;
+	cursor: pointer;
+}
+.b-modal--show {
+	display: block;
+}
+.modal {
+	position: absolute;
+	display:none;
+	font-size: 16px;
+}
+.modal._show {
+	display: block;
+}
+.modal-ip {
+	min-width: 300px;
+	max-width: 750px;
+	background: #ffffff;
+	border-radius: 10px;
+	color: #000000;
+	padding: 20px;
+}
+.modal-ip a {
+	color: #6A6B6F;
+	border: none;
+}
+
+.modal-note {
+	text-align: center;
+}
+
+.modal-title {
+	text-align: center;
+}
+.modal-title .title {
+	display: block;
+	color: #e0423c;
+	font-size: 30px;
+	font-weight: 600;
+	margin-bottom: 0.3em;
+}
+.modal-title .pre-title {
+	display: block;
+	color: #656565;
+	margin: 0 20px;
+}
+.modal-container {
+	/*padding: 25px 0;*/
+}
+.modal-form__msg {
+	font-size: 14px;
+	color: #d72e2e;
+	padding: 20px;
+}
+
+/* .modal-form__item input::-webkit-input-placeholder {color:#67686C;}
+.modal-form__item input::-moz-placeholder          {color:#67686C;}
+.modal-form__item input:-moz-placeholder           {color:#67686C;}
+.modal-form__item input:-ms-input-placeholder      {color:#67686C;} */
+
+.modal-close {
+	/* width: 42px;
+	height: 42px;
+	background: url("../img/cross.png") no-repeat center;
+	background-size: 22px; */
+	border: none;
+	position: absolute;
+	right: -42px;
+	top: 0;
+	cursor: pointer;
+	-webkit-transition: -webkit-transform .5s ease;
+	transition: transform .5s ease;
+}
+/* .modal-close:hover {
+	-webkit-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	transform: rotate(180deg);
+} */

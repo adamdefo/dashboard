@@ -86,7 +86,7 @@
 				<div class="form__group row">
 					<div class="col col-12">
 						<label>Дата изменения</label>
-						<input class="form-control" type="text" value="<?$item['date_last_update']?>" disabled />
+						<input class="form-control" type="text" value="<?=$item['date_last_update']?>" disabled />
 					</div>
 				</div>
 				<?endif?>
@@ -118,6 +118,49 @@
 			</div>
 		</div>
 	</form>
+
+	<?if($_GET['action'] === 'edit'):?>
+	<hr/>
+	<div class="b-ip">
+		<h3>Список подключенных IP адресов <button class="btn btn-small btn-primary">Добавить IP</button></h3>
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th>IP</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>12312312</td>
+					<td class="text-right">
+						<button type="button" class="btn btn-small btn-danger js-off-ip" data-ip="123123">Отключить</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<hr/>
+	<div class="b-vlan">
+		<h3>Список подключенных VLAN <button class="btn btn-small btn-primary">Добавить VLAN</button></h3>
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th>VLAN</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>12312312</td>
+					<td class="text-right">
+						<button type="button" class="btn btn-small btn-danger js-off-vlan" data-vlan="123123">Отключить</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<?endif;?>
 </div>
 
 <script>
@@ -138,6 +181,17 @@ btnSave.addEventListener('click', function(e) {
 		console.error('Упс! Что-то пошло не так.', err.statusText);
 	});
 });
+<?if($_GET['action'] === 'edit'):?>
+var btnOffVLAN = document.querySelector('.js-off-vlan');
+btnOffVLAN.addEventListener('click', function() {
+	alert(this.dataset.vlan);
+});
+
+var btnOffIP = document.querySelector('.js-off-ip');
+btnOffIP.addEventListener('click', function() {
+	alert(this.dataset.ip);
+});
+<?endif;?>
 </script>
 
 <?else:?>
@@ -192,3 +246,17 @@ btnSave.addEventListener('click', function(e) {
 </div>
 
 <?endif;?>
+
+<div id="modal-ip" class="modal modal-add-ip">
+	<button type="button" class="modal-close">Закрыть</button>
+	<div class="modal-content">
+		<div class="modal-title">
+			<span class="title">Добавить IP</span>
+		</div>
+		<div class="modal-container">
+			<div class="modal-note">
+
+			</div>
+		</div>
+	</div>
+</div>
