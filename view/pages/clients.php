@@ -3,21 +3,21 @@
 <?if(isset($_GET['action']) && $_GET['action'] !== '' && $_GET['action'] !== 'delete'):?>
 
 <div class="b-form">
-	<form class="form" action="api/client.php?action=<?=$_GET['action'];?>" method="POST">
+	<form id="formClient" class="form" action="api/client.php?action=<?=$_GET['action'];?>" method="POST">
 		<div class="row">
 			<div class="col col-10">
 				<div class="form__group row">
 					<div class="col col-4">
-						<label>Полное наименование</label>
-						<input class="form-control" name="full_name" type="text" value="<?=$item['full_name']?>" />
+						<label for="fullName">Полное наименование</label>
+						<input id="fullName" class="form-control" name="full_name" type="text" value="<?=$item['full_name']?>" />
 					</div>
 					<div class="col col-4">
-						<label>Краткое наименование</label>
-						<input class="form-control" name="short_name" type="text" value="<?=$item['short_name']?>" />
+						<label for="shortName">Краткое наименование</label>
+						<input id="shortName" class="form-control" name="short_name" type="text" value="<?=$item['short_name']?>" />
 					</div>
 					<div class="col col-4">
-						<label>Директор</label>
-						<input class="form-control" name="director" type="text" value="<?=$item['director']?>" />
+						<label for="director">Директор</label>
+						<input id="director" class="form-control" name="director" type="text" value="<?=$item['director']?>" />
 					</div>
 				</div>
 					
@@ -64,15 +64,16 @@
 			</div>
 
 			<div class="col col-2">
+				<?if($_GET['action'] !== 'add'):?>
 				<div class="form__group row">
-					<?if($_GET['action'] !== 'add'):?>
 					<div class="col col-12">
 						<label>UID</label>
 						<input class="form-control" type="text" value="<?=$item['UID']?>" disabled />
 						<input class="form-control" name="UID" type="hidden" value="<?=$item['UID']?>" />
 					</div>
-					<?endif?>
 				</div>
+				<?endif?>
+
 				<div class="form__group row">
 					<div class="col col-12">
 						<label>Дата создания</label>
@@ -80,12 +81,23 @@
 						<input name="date_created" type="hidden" value="<?=$_GET['action'] === 'add' ? date('Y-m-d H:i:s') : $item['date_created'];?>" />
 					</div>
 				</div>
+
+				<?if($_GET['action'] !== 'add'):?>
+				<div class="form__group row">
+					<div class="col col-12">
+						<label>Дата изменения</label>
+						<input class="form-control" type="text" value="<?$item['date_last_update']?>" disabled />
+					</div>
+				</div>
+				<?endif?>
+
 				<div class="form__group row">
 					<div class="col col-12">
 						<label>Дата подключения</label>
 						<input class="form-control" name="connection_date" type="text" value="<?=$_GET['action'] === 'add' ? date('Y-m-d H:i:s') : $item['connection_date'];?>" />
 					</div>
 				</div>
+
 				<div class="form__group row">
 					<div class="col col-12">
 						<label>Тип соединения</label>
@@ -97,6 +109,7 @@
 						</select>
 					</div>
 				</div>
+
 				<div class="form__group form__group-btn row">
 					<div class="col col-12">
 						<button type="submit" class="btn btn-success js-save">Сохранить</button>
@@ -106,6 +119,26 @@
 		</div>
 	</form>
 </div>
+
+<script>
+var getFormValues = function(form) {
+	var form = document.getElementById(form);
+	var data = {};
+
+	data.fullName = document.getElementById('fullName').value;
+	return data;
+}
+
+var btnSave = document.querySelector('.js-save');
+btnSave.addEventListener('click', function(e) {
+	e.preventDefault();
+	makeRequest('POST', 'api/client.php', getFormValues('formClient')).then(function (data) {
+		console.log(JSON.parse(data));
+	}).catch(function (err) {
+		console.error('Упс! Что-то пошло не так.', err.statusText);
+	});
+});
+</script>
 
 <?else:?>
 
@@ -127,8 +160,8 @@
 				<th>Примечание</th>
 				<th>Откр. примечание</th>
 				<th>Комментарий</th>
-				<th>Создан</th>
-				<th>Обновлен</th>
+				<th>Дата создания</th>
+				<th>Дата изменения</th>
 			</tr>
 		</thead>
 		<tbody>

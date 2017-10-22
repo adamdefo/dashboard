@@ -45,9 +45,9 @@
 										<li><a href="index.php?view=vlan">VLAN</a></li>
 										<li class="divider"></li>
 										<li class="nav-header">Состояния</li>
-										<li><a href="index.php?view=connection_type">Типы подключений</a></li>
+										<!-- <li><a href="index.php?view=connection_type">Типы подключений</a></li>
 										<li><a href="index.php?view=commutator_status">Статусы коммутаторов</a></li>
-										<li><a href="index.php?view=task_status">Статусы задач</a></li>
+										<li><a href="index.php?view=task_status">Статусы задач</a></li> -->
 									</ul>
 								</li>
 							</ul>
@@ -72,6 +72,6 @@
 
 		<script src="assets/js/jquery.js"></script>
 		<script src="assets/js/bootstrap.min.js"></script>
-		<!--<script src="app.js"></script>-->
+		<script src="app.js"></script>
 	</body>
 </html>

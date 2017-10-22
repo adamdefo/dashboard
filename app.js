@@ -1,7 +1,9 @@
-function makeRequest (method, url, data = '') {
+var makeRequest = function (method, url, data) {
 	return new Promise(function (resolve, reject) {
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, url);
+		// xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xhr.onload = function () {
 			if (this.status >= 200 && this.status < 300) {
 				resolve(xhr.response);
@@ -18,14 +20,6 @@ function makeRequest (method, url, data = '') {
 				statusText: xhr.statusText
 			});
 		};
-      	console.log(data);
-      	if (data != '') { xhr.send(); } else { xhr.send(); }
+		method === 'POST' ? xhr.send('data=' + JSON.stringify(data)) : xhr.send(null); 
 	});
-  }
-
-makeRequest('GET', 'api')
-	.then(function (datums) {
-		console.log(JSON.parse(datums));
-	}).catch(function (err) {
-		console.error('Упс! Что-то пошло не так.', err.statusText);
-	});
+}

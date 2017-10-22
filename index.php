@@ -23,7 +23,26 @@ switch($view) {
 
 		if(isset($_GET['action']) && $_GET['action'] !== ''):
 			$COMMUTATOR_STATUS = $DB -> GetListItems('DIR_TASK_STATUS');
-			$LIST_OBJECT = $DB -> GetListItemsNoClone('COMMUTATORS');
+			//$LIST_OBJECT = $DB -> GetListItemsNoClone('COMMUTATORS');
+
+			// $queryGetListObjects = "SELECT * FROM COMMUTATORS AS cmt, 
+			// (SELECT UID, MAX(date_last_update) AS date FROM COMMUTATORS 
+			// GROUP BY UID) AS cmt_group 
+			// WHERE cmt.UID = cmt_group.UID AND cmt.date_last_update = cmt_group.date 
+			// ORDER BY id DESC 
+			// UNION 
+			// SELECT * FROM CLIENTS AS cln, 
+			// (SELECT UID, MAX(date_last_update) AS date2 FROM CLIENTS 
+			// GROUP BY UID) AS cln_group 
+			// WHERE cln.UID = cln_group.UID AND cln.date_last_update = cln_group.date2 
+			// ORDER BY id DESC";
+
+			$queryGetListObjects = "SELECT id, UID FROM COMMUTATORS AS commutators 
+			 UNION 
+			SELECT id, UID FROM CLIENTS AS clients";
+
+			$listObjects = $DB -> FetchDataInArray($DB -> ExecuteQuery($queryGetListObjects));
+
 			switch($_GET['action']) {
 				case('add'):
 					$title = 'Создание задачи';

@@ -7,6 +7,8 @@ $arrKeysToStr = implode(",", array_keys($_POST));
 
 $action = 'add';
 
+$data = json_decode($_REQUEST['data']); // входящие данные
+
 // добавление или редактирование
 if(isset($_POST['action'])):
 	$action = $_POST['action'];
@@ -19,7 +21,6 @@ if(isset($_GET['action'])):
 endif;
 
 if($action === 'add' || $action === 'edit'):
-	$UID = $_POST['UID'];
 	$fullName = $_POST['full_name'];
 	$shortName = $_POST['short_name'];
 	$director = $_POST['director'];
@@ -35,6 +36,8 @@ if($action === 'add' || $action === 'edit'):
 	$comment = $_POST['comment'];
 	$date_created = $_POST['date_created'];
 endif;
+
+$data = ['fullName'];
 
 $sqlQuery = "";
 switch($action) {
@@ -59,5 +62,6 @@ switch($action) {
 	break;
 }
 
-$data = $DB -> ExecuteQuery($sqlQuery);
-echo $data ? '<html><head><meta http-equiv="Refresh" content="0; URL=../index.php?view=clients"></head></html>' : 'fail';
+//$data = $DB -> ExecuteQuery($sqlQuery);
+//echo $data ? '<html><head><meta http-equiv="Refresh" content="0; URL=../index.php?view=clients"></head></html>' : 'fail';
+echo json_encode($data);

@@ -45,8 +45,8 @@
 						<label>Объект</label>
 						<select class="form-control" name="object_ID">
 							<option value="0">нет</option>
-							<?foreach($LIST_OBJECT as $obj):?>
-							<option value="<?=$obj['UID']?>" <?if($obj['UID'] === $item['object_ID']):?>selected<?endif;?>><?=$obj['UID']?></option>
+							<?foreach($listObjects as $obj):?>
+							<option value="<?=$obj['UID']?>" <?if($obj['UID'] === $item['object_ID']):?>selected<?endif;?>><?=$obj['id']?></option>
 							<?endforeach;?>
 						</select>
 					</div>
