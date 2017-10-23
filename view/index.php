@@ -17,6 +17,9 @@
 		<link rel="stylesheet" href="assets/css/bootstrap-responsive.css" />
 		<link rel="stylesheet" href="assets/css/styles.css" />
 
+		<script src="assets/js/jquery.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+
 		<!--[if IE]>
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
@@ -70,8 +73,64 @@
 			</div>
 		</div>
 
-		<script src="assets/js/jquery.js"></script>
-		<script src="assets/js/bootstrap.min.js"></script>
+		<div class="modal-overlay"></div>
+		<div id="modal-ip" class="modal modal-add-ip">
+			<button type="button" class="btn modal-close">Закрыть</button>
+			<div class="modal-content">
+				<div class="modal-title">
+					<span class="title">Добавить IP</span>
+				</div>
+				<div class="modal-container">
+					<div class="modal-note">
+						
+					</div>
+					<form class="form">
+
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div id="modal-vlan" class="modal modal-add-vlan">
+			<button type="button" class="btn modal-close js-modal-close" data-modal="modal-vlan">Закрыть</button>
+			<div class="modal-content">
+				<div class="modal-title">
+					<h2>Добавить VLAN</h2>
+				</div>
+				<div class="modal-container">
+					<div class="modal-note"></div>
+					<form id="form-vlan" class="form">
+						<div class="form__group row">
+							<div class="col col-12">
+								<label>VLAN</label>
+								<input class="form-control" name="vlan" type="text" value="" />
+							</div>
+						</div>
+						<div class="form__group row">
+							<div class="col col-12">
+								<label>Скорость</label>
+								<input class="form-control" name="speed" type="text" value="" />
+							</div>
+						</div>
+						<div class="form__group form__group-btn row">
+							<div class="col col-12 text-right">
+								<button type="submit" class="btn btn-success js-save-vlan">Сохранить</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
 		<script src="app.js"></script>
+		<script>
+		$(function() {
+			var modalOverlay = $('.modal-overlay');
+			$('.js-modal-close').on('click', function() {
+				$('#'+$(this).data('modal')).removeClass('_show');
+				modalOverlay.removeClass('_show');
+			});
+		});
+		</script>
 	</body>
 </html>

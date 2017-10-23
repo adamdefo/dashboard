@@ -85,6 +85,8 @@ switch($view) {
 					if(isset($_GET['id']) && $_GET['id'] !== ''):
 						$item = $DB -> GetItem('CLIENTS', $_GET['id']);
 						$title = 'Обновление клиента '.$item['full_name'];
+						// список подключенных VLAN
+						$listVLAN = $DB -> GetListItems('VLAN', 'id', 'DESC', 'client_ID', $item['UID']);
 					else:
 						$item = $DB -> GetItem('CLIENTS', 1);
 					endif;

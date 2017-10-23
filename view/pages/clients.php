@@ -69,7 +69,7 @@
 					<div class="col col-12">
 						<label>UID</label>
 						<input class="form-control" type="text" value="<?=$item['UID']?>" disabled />
-						<input class="form-control" name="UID" type="hidden" value="<?=$item['UID']?>" />
+						<input id="UID" class="form-control" name="UID" type="hidden" value="<?=$item['UID']?>" />
 					</div>
 				</div>
 				<?endif?>
@@ -120,10 +120,10 @@
 	</form>
 
 	<?if($_GET['action'] === 'edit'):?>
-	<hr/>
+	<!-- <hr/>
 	<div class="b-ip">
-		<h3>Список подключенных IP адресов <button class="btn btn-small btn-primary">Добавить IP</button></h3>
-		<table class="table table-striped table-hover">
+		<h3>Список подключенных IP адресов <button class="btn btn-small btn-primary js-add-ip">Добавить IP</button></h3>
+		<table id="tbl-vlan" class="table table-striped table-hover">
 			<thead>
 				<tr>
 					<th>IP</th>
@@ -139,11 +139,12 @@
 				</tr>
 			</tbody>
 		</table>
-	</div>
+	</div> -->
 	<hr/>
 	<div class="b-vlan">
-		<h3>Список подключенных VLAN <button class="btn btn-small btn-primary">Добавить VLAN</button></h3>
-		<table class="table table-striped table-hover">
+		<h3>Список подключенных VLAN <button class="btn btn-small btn-primary js-add-vlan">Добавить VLAN</button></h3>
+		<table id="tbl-vlan" class="table table-striped table-hover">
+		<?if(count($listVLAN)):?>
 			<thead>
 				<tr>
 					<th>VLAN</th>
@@ -151,13 +152,22 @@
 				</tr>
 			</thead>
 			<tbody>
+				<?foreach($listVLAN as $vlan):?>
 				<tr>
-					<td>12312312</td>
+					<td><?=$vlan['value']?></td>
 					<td class="text-right">
-						<button type="button" class="btn btn-small btn-danger js-off-vlan" data-vlan="123123">Отключить</button>
+						<button type="button" class="btn btn-small btn-danger js-off-vlan" data-vlan="<?=$vlan['value']?>">Отключить</button>
 					</td>
 				</tr>
+				<?endforeach;?>
 			</tbody>
+		<?else:?>
+			<tbody>
+				<tr>
+					<td colspan="2"><p>Ни одного VLAN не подключено</p></td>
+				</tr>
+			</tbody>
+		<?endif;?>
 		</table>
 	</div>
 	<?endif;?>
@@ -166,30 +176,59 @@
 <script>
 var getFormValues = function(form) {
 	var form = document.getElementById(form);
-	var data = {};
+	var data = {
+		statusText: ''
+	};
 
-	data.fullName = document.getElementById('fullName').value;
+	[].slice.call(form.querySelectorAll('.form-control')).forEach(function(input) {
+		data[input.getAttribute('name')] = input.value;
+	});
+
 	return data;
 }
-
-var btnSave = document.querySelector('.js-save');
-btnSave.addEventListener('click', function(e) {
-	e.preventDefault();
-	makeRequest('POST', 'api/client.php', getFormValues('formClient')).then(function (data) {
-		console.log(JSON.parse(data));
-	}).catch(function (err) {
-		console.error('Упс! Что-то пошло не так.', err.statusText);
+<?if($_GET['action'] === 'edit'):?>
+// UID клиента
+var UID = document.getElementById('UID').value;
+// таблица VLAN
+var tblVLAN = document.getElementById('tbl-vlan'),
+	tblVLANtbody = tblVLAN.querySelector('tbody');
+// кнопки отключения VLAN у клиента
+[].slice.call(document.querySelectorAll('.js-off-vlan')).forEach(function(btn) {
+	btn.addEventListener('click', function() {
+		alert(this.dataset.vlan);
 	});
 });
-<?if($_GET['action'] === 'edit'):?>
-var btnOffVLAN = document.querySelector('.js-off-vlan');
-btnOffVLAN.addEventListener('click', function() {
-	alert(this.dataset.vlan);
-});
+// кнопки отключения IP у клиента
+// [].slice.call(document.querySelectorAll('.js-off-ip')).forEach(function(btn) {
+// 	btn.addEventListener('click', function() {
+// 		alert(this.dataset.ip);
+// 	});
+// });
 
-var btnOffIP = document.querySelector('.js-off-ip');
-btnOffIP.addEventListener('click', function() {
-	alert(this.dataset.ip);
+$(function() {
+	// кнопка отображающая модалку добавления VLAN
+	$('.js-add-vlan').on('click',function() {
+		$('.modal-overlay').addClass('_show');
+		$('#modal-vlan').addClass('_show');
+
+		// кнопка добавления VLAN клиенту
+		var btnSaveVLAN = document.querySelector('.js-save-vlan');
+		btnSaveVLAN.addEventListener('click', function(e) {
+			e.preventDefault();
+			var json = getFormValues('form-vlan');
+			json.action = 'add';
+			json.UID = UID; // добавляем UID клиента
+			var tr = document.createElement('tr');
+			tr.innerHTML = '<td>' + json.vlan + '</td>' + 
+			'<td class="text-right"><button type="button" class="btn btn-small btn-danger js-off-vlan" data-vlan="' + json.vlan + '">Отключить</button></td>';
+			makeRequest('POST', 'api/vlan.php', json).then(function (res) {
+				console.log(JSON.parse(res));
+				tblVLANtbody.insertBefore(tr, tblVLANtbody.firstChild);
+			}).catch(function (err) {
+				console.error('Упс! Что-то пошло не так.', err.statusText);
+			});
+		});
+	});
 });
 <?endif;?>
 </script>
@@ -201,44 +240,44 @@ btnOffIP.addEventListener('click', function() {
 	<table class="table table-striped table-hover">
 		<thead>
 			<tr>
-				<th>UID</th>
+				<!-- <th>UID</th> -->
 				<th>Наименование</th>
-				<th>Краткое наименование</th>
+				<!-- <th>Краткое наименование</th> -->
 				<th>Директор</th>
 				<th>ИНН</th>
 				<th>Контакты</th>
 				<th>Юр. адрес</th>
-				<th>Факт. адрес</th>
+				<!-- <th>Факт. адрес</th> -->
 				<th>Дата подключения</th>
 				<th>Тип подключения</th>
 				<th>Примечание</th>
-				<th>Откр. примечание</th>
+				<!-- <th>Откр. примечание</th>
 				<th>Комментарий</th>
 				<th>Дата создания</th>
-				<th>Дата изменения</th>
+				<th>Дата изменения</th> -->
 			</tr>
 		</thead>
 		<tbody>
 		<?foreach($items as $item):?>
 			<tr>
-				<td>
+				<!-- <td>
 					<a href="index.php?view=clients&action=edit&id=<?=$item['id'];?>"><?=$item['UID'];?></a>
-					<!-- <a href="api/client.php?action=delete&id=<?=$item['id'];?>" class="btn btn-small btn-danger">Удалить</a> -->
-				</td>
+					<a href="api/client.php?action=delete&id=<?=$item['id'];?>" class="btn btn-small btn-danger">Удалить</a>
+				</td> -->
 				<td><a href="index.php?view=clients&action=edit&id=<?=$item['id'];?>"><?=$item['full_name']?></a></td>
-				<td><?=$item['short_name']?></td>
+				<!-- <td><?=$item['short_name']?></td> -->
 				<td><?=$item['director']?></td>
 				<td><?=$item['inn']?></td>
 				<td><?=$item['contact_person']?><br/><?=$item['contact_person_phone']?></td>
 				<td><?=$item['ul_adress']?></td>
-				<td><?=$item['fact_adress']?></td>
+				<!-- <td><?=$item['fact_adress']?></td> -->
 				<td><?=$item['connection_date']?></td>
 				<td><?=$item['connection_type_ID']?></td>
 				<td><?=$item['note']?></td>
-				<td><?=$item['note_open']?></td>
+				<!-- <td><?=$item['note_open']?></td>
 				<td><?=$item['comment']?></td>
 				<td><?=$item['date_created']?></td>
-				<td><?=$item['date_last_update']?></td>
+				<td><?=$item['date_last_update']?></td> -->
 			</tr>
 		<?endforeach;?>
 		</tbody>
@@ -246,17 +285,3 @@ btnOffIP.addEventListener('click', function() {
 </div>
 
 <?endif;?>
-
-<div id="modal-ip" class="modal modal-add-ip">
-	<button type="button" class="modal-close">Закрыть</button>
-	<div class="modal-content">
-		<div class="modal-title">
-			<span class="title">Добавить IP</span>
-		</div>
-		<div class="modal-container">
-			<div class="modal-note">
-
-			</div>
-		</div>
-	</div>
-</div>
