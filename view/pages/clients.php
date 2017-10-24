@@ -156,7 +156,7 @@
 				<tr>
 					<td><?=$vlan['value']?></td>
 					<td class="text-right">
-						<button type="button" class="btn btn-small btn-danger js-off-vlan" data-vlan="<?=$vlan['value']?>">Отключить</button>
+						<button type="button" class="btn btn-small btn-danger js-off-vlan" data-uid="<?=$vlan['UID']?>">Отключить</button>
 					</td>
 				</tr>
 				<?endforeach;?>
@@ -174,30 +174,16 @@
 </div>
 
 <script>
-var getFormValues = function(form) {
-	var form = document.getElementById(form);
-	var data = {
-		statusText: ''
-	};
-
-	[].slice.call(form.querySelectorAll('.form-control')).forEach(function(input) {
-		data[input.getAttribute('name')] = input.value;
-	});
-
-	return data;
-}
 <?if($_GET['action'] === 'edit'):?>
 // UID клиента
-var UID = document.getElementById('UID').value;
+var clientID = document.getElementById('UID').value;
+
 // таблица VLAN
 var tblVLAN = document.getElementById('tbl-vlan'),
 	tblVLANtbody = tblVLAN.querySelector('tbody');
-// кнопки отключения VLAN у клиента
-[].slice.call(document.querySelectorAll('.js-off-vlan')).forEach(function(btn) {
-	btn.addEventListener('click', function() {
-		alert(this.dataset.vlan);
-	});
-});
+var offVLAN = function() {
+	alert(this.dataset.value);
+}
 // кнопки отключения IP у клиента
 // [].slice.call(document.querySelectorAll('.js-off-ip')).forEach(function(btn) {
 // 	btn.addEventListener('click', function() {
@@ -205,28 +191,64 @@ var tblVLAN = document.getElementById('tbl-vlan'),
 // 	});
 // });
 
+// создает кнопку для новой строки в таблице, которая отключает запись
+var createBtnOff = function(jsClass, attrVal) {
+	var btn = document.createElement('button');
+	classie.add(btn, 'btn');
+	classie.add(btn, 'btn-small');
+	classie.add(btn, 'btn-danger');
+	classie.add(btn, jsClass);
+	btn.setAttribute('data-value', attrVal);
+	btn.appendChild(document.createTextNode('Отключить'));
+	btn.addEventListener('click', offVLAN);
+	return btn;
+}
+
 $(function() {
-	// кнопка отображающая модалку добавления VLAN
+	// кнопка отображающая модалку для добавления VLAN
 	$('.js-add-vlan').on('click',function() {
 		$('.modal-overlay').addClass('_show');
 		$('#modal-vlan').addClass('_show');
-
-		// кнопка добавления VLAN клиенту
-		var btnSaveVLAN = document.querySelector('.js-save-vlan');
-		btnSaveVLAN.addEventListener('click', function(e) {
-			e.preventDefault();
-			var json = getFormValues('form-vlan');
-			json.action = 'add';
-			json.UID = UID; // добавляем UID клиента
+	});
+	// кнопка сохранения VLAN
+	$('.js-save-vlan').on('click',function(e) {
+		e.preventDefault();
+		var json = getFormValues('form-vlan');
+		json.action = 'add';
+		json.clientID = clientID; // добавляем UID клиента
+		makeRequest('POST', 'api/vlan.php', json).then(function (response) {
+			var res = JSON.parse(response);
+			console.log(res);
+			// создаем новую строку
 			var tr = document.createElement('tr');
-			tr.innerHTML = '<td>' + json.vlan + '</td>' + 
-			'<td class="text-right"><button type="button" class="btn btn-small btn-danger js-off-vlan" data-vlan="' + json.vlan + '">Отключить</button></td>';
-			makeRequest('POST', 'api/vlan.php', json).then(function (res) {
-				console.log(JSON.parse(res));
-				tblVLANtbody.insertBefore(tr, tblVLANtbody.firstChild);
-			}).catch(function (err) {
-				console.error('Упс! Что-то пошло не так.', err.statusText);
-			});
+			var td1 = document.createElement('td');
+			td1.appendChild(document.createTextNode(res.vlan));
+			tr.appendChild(td1);
+			var td2 = document.createElement('td');
+			classie.add(td2, 'text-right');
+			td2.appendChild(createBtnOff('js-off-vlan', res.UID));
+			tr.appendChild(td2);
+			// вставляем новую строку в таблицу
+			tblVLANtbody.insertBefore(tr, tblVLANtbody.firstChild);
+		}).catch(function (err) {
+			console.error('Упс! Что-то пошло не так.', err.statusText);
+		});
+	});
+	// кнопки отключения VLAN
+	$('.js-off-vlan').on('click',function(e) {
+		var self = this;
+		var json = new Object();
+		json = {
+			action: 'edit',
+			UID: self.dataset.uid,
+			clientID: clientID
+		};
+		makeRequest('POST', 'api/vlan.php', json).then(function (response) {
+			var res = JSON.parse(response);
+			console.log(res);
+			$(self).parent().parent().remove();
+		}).catch(function (err) {
+			console.error('Упс! Что-то пошло не так.', err.statusText);
 		});
 	});
 });

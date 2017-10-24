@@ -23,3 +23,15 @@ var makeRequest = function (method, url, data) {
 		method === 'POST' ? xhr.send('data=' + JSON.stringify(data)) : xhr.send(null); 
 	});
 }
+
+var getFormValues = function(form) {
+	var form = document.getElementById(form);
+	var data = {
+		statusText: ''
+	};
+	[].slice.call(form.querySelectorAll('.form-control')).forEach(function(input) {
+		data[input.getAttribute('name')] = input.value;
+	});
+	
+	return data;
+}

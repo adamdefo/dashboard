@@ -86,7 +86,12 @@ switch($view) {
 						$item = $DB -> GetItem('CLIENTS', $_GET['id']);
 						$title = 'Обновление клиента '.$item['full_name'];
 						// список подключенных VLAN
-						$listVLAN = $DB -> GetListItems('VLAN', 'id', 'DESC', 'client_ID', $item['UID']);
+						$query = "SELECT * FROM VLAN AS res, 
+						(SELECT UID, MAX(date_last_update) AS date FROM VLAN 
+						GROUP BY UID) AS res2 
+						WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.status != 0 
+						ORDER BY id DESC";
+						$listVLAN = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
 					else:
 						$item = $DB -> GetItem('CLIENTS', 1);
 					endif;

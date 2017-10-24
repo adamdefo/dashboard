@@ -1,30 +1,12 @@
 <?php
-
 require('../db/DB.php');
 $DB = new DB();
 
 $action = 'add'; // по умолчанию создаем новую запись
 $data = json_decode($_REQUEST['data']); // входящие данные
 
-// добавление или редактирование
-// if(isset($_POST['action'])):
-// 	$action = $_POST['action'];
-// endif;
-
-// удаление
-// if(isset($_GET['action'])):
-// 	$action = $_GET['action'];
-// 	$id = $_GET['id'];
-// endif;
-
-// стандартный набор значений для сохранения
-// if($action === 'add' || $action === 'edit'):
-// 	$value = $_POST['value'];
-// 	$speed = $_POST['speed'];
-// 	$clientID = $_POST['client_ID'];
-// 	$date_created = $_POST['date_created'];
-// 	$status = is_null($_POST['status']) ? 0 : $_POST['status'];
-// endif;
+$action = $data->action;
+$clientID = $data->clientID;
 
 $sqlQuery = "";
 switch($action) {
@@ -34,13 +16,19 @@ switch($action) {
 		$date_created = date('Y-m-d H:i:s');
 		$date_last_update = $date_created;
 		$sqlQuery = "INSERT INTO VLAN (UID,value,speed,status,date_created,date_last_update,client_ID) 
-		VALUES ('$UID','$data->vlan','$data->speed',1,'$date_created','$date_last_update','$data->UID')";
+		VALUES ('$UID','$data->vlan','$data->speed',1,'$date_created','$date_last_update','$clientID')";
+		$data->UID = $UID;
+		$data->statusText = 'VLAN добавлен.';
 	break;
-	case('edit'):
-		$UID = $_POST['UID'];
+	case('edit'): // отключение VLAN
+		$listVlan = $DB -> GetListItems('VLAN', 'date_last_update', 'DESC', 'UID', $data->UID);
+		$value = $listVlan[0]['value'];
+		$speed = $listVlan[0]['speed'];
+		$date_created = $listVlan[0]['date_created'];
 		$date_last_update = date('Y-m-d H:i:s');
 		$sqlQuery = "INSERT INTO VLAN (UID,value,speed,status,date_created,date_last_update,client_ID) 
-		VALUES ('$UID','$value','$speed','$status','$date_created','$date_last_update','$clientID')";
+		VALUES ('$data->UID','$value','$speed',0,'$date_created','$date_last_update','$clientID')";
+		$data->statusText = 'VLAN отключен.';
 	break;
 	case('delete'):
 		$sqlQuery = "DELETE FROM VLAN WHERE id='$id'";
@@ -51,5 +39,4 @@ switch($action) {
 }
 
 $DB -> ExecuteQuery($sqlQuery);
-echo json_encode($data->statusText = 'VLAN добавлен.');
-//echo $data ? '<html><head><meta http-equiv="Refresh" content="0; URL=../index.php?view=vlan"></head></html>' : 'Есть ошибки!';
+echo json_encode($data);

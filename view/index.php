@@ -122,6 +122,7 @@
 			</div>
 		</div>
 
+		<script src="assets/js/classie.js"></script>
 		<script src="app.js"></script>
 		<script>
 		$(function() {
