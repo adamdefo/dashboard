@@ -24,6 +24,7 @@ var makeRequest = function (method, url, data) {
 	});
 }
 
+// получает значение инпутов в форме
 var getFormValues = function(form) {
 	var form = document.getElementById(form);
 	var data = {
@@ -34,4 +35,16 @@ var getFormValues = function(form) {
 	});
 	
 	return data;
+}
+
+// создает кнопку для новой строки в таблице, которая отключает запись
+var createBtnOff = function(jsClass, attrVal) {
+	var btn = document.createElement('button');
+	classie.add(btn, 'btn');
+	classie.add(btn, 'btn-small');
+	classie.add(btn, 'btn-danger');
+	classie.add(btn, jsClass);
+	btn.setAttribute('data-uid', attrVal);
+	btn.appendChild(document.createTextNode('Отключить'));
+	return btn;
 }

@@ -89,7 +89,7 @@ switch($view) {
 						$query = "SELECT * FROM VLAN AS res, 
 						(SELECT UID, MAX(date_last_update) AS date FROM VLAN 
 						GROUP BY UID) AS res2 
-						WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.status != 0 
+						WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.status != 0 AND res.client_ID = $item[UID] 
 						ORDER BY id DESC";
 						$listVLAN = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
 					else:
