@@ -74,23 +74,9 @@
 		</div>
 
 		<div class="modal-overlay"></div>
-		<div id="modal-ip" class="modal modal-add-ip">
-			<button type="button" class="btn modal-close">Закрыть</button>
-			<div class="modal-content">
-				<div class="modal-title">
-					<span class="title">Добавить IP</span>
-				</div>
-				<div class="modal-container">
-					<div class="modal-note">
-						
-					</div>
-					<form class="form">
 
-					</form>
-				</div>
-			</div>
-		</div>
-
+		<?if($_GET['view'] === 'clients' && $_GET['action'] === 'edit'):?>
+		<!-- Модалка для VLAN -->
 		<div id="modal-vlan" class="modal modal-add-vlan">
 			<button type="button" class="btn modal-close js-modal-close" data-modal="modal-vlan">Закрыть</button>
 			<div class="modal-content">
@@ -121,6 +107,52 @@
 				</div>
 			</div>
 		</div>
+		<!-- Модалка для IP -->
+		<div id="modal-ip" class="modal modal-add-ip">
+			<button type="button" class="btn modal-close js-modal-close" data-modal="modal-ip">Закрыть</button>
+			<div class="modal-content">
+				<div class="modal-title">
+					<h2>Добавить IP</h2>
+				</div>
+				<div class="modal-container">
+					<div class="modal-note"></div>
+					<form id="form-ip" class="form">
+						<div class="form__group row">
+							<div class="col col-12">
+								<label>IP</label>
+								<input class="form-control" name="ip" type="text" value="" />
+							</div>
+						</div>
+						<div class="form__group row">
+							<div class="col col-12">
+								<?if(count($listVLAN)):?>
+								<label>VLAN</label>
+								<select class="form-control" name="vlanID">
+									<?foreach($listVLAN as $vlan):?>
+									<option value="<?=$vlan['UID']?>"><?=$vlan['value']?></option>
+									<?endforeach;?>
+								</select>
+								<?else:?>
+								<p>У клиента нет VLAN, сначала <a class="js-add-vlan">добавьте VLAN</a></p>
+								<?endif;?>
+							</div>
+						</div>
+						<div class="form__group row">
+							<div class="col col-12">
+								<label>Скорость</label>
+								<input class="form-control" name="speed" type="text" value="" />
+							</div>
+						</div>
+						<div class="form__group form__group-btn row">
+							<div class="col col-12 text-right">
+								<button type="submit" class="btn btn-success js-save-ip">Сохранить</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<?endif;?>
 
 		<script src="assets/js/classie.js"></script>
 		<script src="app.js"></script>

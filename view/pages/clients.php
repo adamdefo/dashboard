@@ -120,26 +120,36 @@
 	</form>
 
 	<?if($_GET['action'] === 'edit'):?>
-	<!-- <hr/>
+	<hr/>
 	<div class="b-ip">
-		<h3>Список подключенных IP адресов <button class="btn btn-small btn-primary js-add-ip">Добавить IP</button></h3>
-		<table id="tbl-vlan" class="table table-striped table-hover">
-			<thead>
+		<h3>Список подключенных IP <button class="btn btn-small btn-primary js-add-ip">Добавить IP</button></h3>
+		<table id="tbl-ip" class="tbl table table-striped table-hover">
+		<?if(count($listIP)):?>
+			<thead class="tbl__head">
 				<tr>
 					<th>IP</th>
 					<th></th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody class="tbl__body">
+				<?foreach($listIP as $ip):?>
 				<tr>
-					<td>12312312</td>
+					<td><?=$ip['ip']?></td>
 					<td class="text-right">
-						<button type="button" class="btn btn-small btn-danger js-off-ip" data-ip="123123">Отключить</button>
+						<button type="button" class="btn btn-small btn-danger js-off-ip" data-uid="<?=$ip['UID']?>">Отключить</button>
 					</td>
 				</tr>
+				<?endforeach;?>
 			</tbody>
+		<?else:?>
+			<tbody class="tbl__body">
+				<tr class="tr-null">
+					<td colspan="2"><p>Ни одного IP не подключено</p></td>
+				</tr>
+			</tbody>
+		<?endif;?>
 		</table>
-	</div> -->
+	</div>
 	<hr/>
 	<div class="b-vlan">
 		<h3>Список подключенных VLAN <button class="btn btn-small btn-primary js-add-vlan">Добавить VLAN</button></h3>
@@ -173,88 +183,9 @@
 	<?endif;?>
 </div>
 
-<script>
 <?if($_GET['action'] === 'edit'):?>
-// таблица IP
-// var tblIP = document.getElementById('tbl-ip'),
-// 	tblIPtbody = tblIP.querySelector('tbody');
-
-// кнопки отключения IP у клиента
-// [].slice.call(document.querySelectorAll('.js-off-ip')).forEach(function(btn) {
-// 	btn.addEventListener('click', function() {
-// 		alert(this.dataset.ip);
-// 	});
-// });
-
-$(function() {
-	// UID клиента
-	var clientID = document.getElementById('UID').value;
-	// таблица VLAN
-	var $tblVLAN = $('#tbl-vlan'),
-		$tblVLANtbody = $tblVLAN.find('.tbl__body'),
-		$trNull = $tblVLANtbody.find('.tr-null'),
-		trNullHTML = '<tr class="tr-null"><td colspan="2"><p>Ни одного VLAN не подключено</p></td></tr>';
-
-	// кнопка отображающая модалку для добавления VLAN
-	$('.js-add-vlan').on('click',function() {
-		$('.modal-overlay').addClass('_show');
-		$('#modal-vlan').addClass('_show');
-	});
-
-	// кнопка сохранения VLAN
-	$('.js-save-vlan').on('click',function(e) {
-		e.preventDefault();
-		var json = getFormValues('form-vlan');
-		json.action = 'add';
-		json.clientID = clientID; // добавляем UID клиента
-		makeRequest('POST', 'api/vlan.php', json).then(function (response) {
-			var res = JSON.parse(response);
-			console.log(res);
-			if (!res.isExist) { // если такой записи в таблице нет, то вставляем
-				// создаем новую строку
-				var tr = document.createElement('tr');
-				var td1 = document.createElement('td');
-				td1.appendChild(document.createTextNode(res.vlan));
-				tr.appendChild(td1);
-				var td2 = document.createElement('td');
-				classie.add(td2, 'text-right');
-				td2.appendChild(createBtnOff('js-off-vlan', res.UID));
-				tr.appendChild(td2);
-				// проверяем есть ли записи в таблице
-				if ($tblVLANtbody.find('.tr-null').length) {
-					$tblVLANtbody.find('.tr-null').remove();
-				}
-				// вставляем новую строку в таблицу
-				$tblVLANtbody.prepend(tr);
-			}
-		}).catch(function (err) {
-			console.error('Упс! Что-то пошло не так.', err.statusText);
-		});
-	});
-
-	// кнопки отключения VLAN
-	$('body').on('click', '.js-off-vlan', function(e) {
-		var self = this;
-		var json = new Object();
-		json = {
-			action: 'edit',
-			UID: self.dataset.uid,
-			clientID: clientID
-		};
-		makeRequest('POST', 'api/vlan.php', json).then(function (response) {
-			var res = JSON.parse(response);
-			$(self).parent().parent().remove();
-			// проверяем не ли записей в таблице
-			if (!$tblVLANtbody.find('tr').length) {
-				$tblVLANtbody.append(trNullHTML);
-			}
-		}).catch(function (err) {
-			console.error('Упс! Что-то пошло не так.', err.statusText);
-		});
-	});
-});
+<script src="app/clients.js"></script>
 <?endif;?>
-</script>
 
 <?else:?>
 

@@ -72,7 +72,6 @@ switch($view) {
 
 	case('clients'):
 		$title = 'Клиенты';
-
 		if(isset($_GET['action']) && $_GET['action'] !== ''):
 			$CONNECTION_TYPE = $DB -> GetListItems('DIR_CONNECTION_TYPE');
 			switch($_GET['action']) {
@@ -92,6 +91,13 @@ switch($view) {
 						WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.status != 0 AND res.client_ID = $item[UID] 
 						ORDER BY id DESC";
 						$listVLAN = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
+						// список подключенных IP
+						$queryIP = "SELECT * FROM IP_ADRESS AS res, 
+						(SELECT UID, MAX(date_last_update) AS date FROM IP_ADRESS 
+						GROUP BY UID) AS res2 
+						WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.status != 0 AND res.client_ID = $item[UID] 
+						ORDER BY id DESC";
+						$listIP = $DB -> FetchDataInArray($DB -> ExecuteQuery($queryIP));
 					else:
 						$item = $DB -> GetItem('CLIENTS', 1);
 					endif;
