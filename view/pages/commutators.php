@@ -41,6 +41,11 @@
 						<label>Родительский коммутатор</label>
 						<select class="form-control" name="parent_ID">
 							<option value="0">нет</option>
+							<?if(count($listCommutators)):?>
+								<?foreach($listCommutators as $commutator):?>
+								<option value="<?=$commutator['UID']?>" <?if($commutator['UID'] === $item['parent_ID']):?>selected<?endif;?>><?=$commutator['model']?></option>
+								<?endforeach;?>
+							<?endif;?>
 						</select>
 					</div>
 					<div class="col col-6">

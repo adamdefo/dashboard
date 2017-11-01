@@ -119,12 +119,24 @@ switch($view) {
 				case('add'):
 					$title = 'Создание коммутатора';
 					$action = 'add';
+					$query = "SELECT * FROM COMMUTATORS AS res, 
+					(SELECT UID, MAX(date_last_update) AS date FROM COMMUTATORS 
+					GROUP BY UID) AS res2 
+					WHERE res.UID = res2.UID AND res.date_last_update = res2.date  
+					ORDER BY id DESC";
+					$listCommutators = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
 				break;
 				case('edit'):
 					$action = 'edit';
 					if(isset($_GET['id']) && $_GET['id'] !== ''):
 						$item = $DB -> GetItem('COMMUTATORS', $_GET['id']);
 						$title = 'Обновление коммутатора '.$item['model'].' | '.$item['UID'];
+						$query = "SELECT * FROM COMMUTATORS AS res, 
+						(SELECT UID, MAX(date_last_update) AS date FROM COMMUTATORS 
+						GROUP BY UID) AS res2 
+						WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.UID != $item[UID] 
+						ORDER BY id DESC";
+						$listCommutators = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
 					else:
 						$item = $DB -> GetItem('COMMUTATORS', 1);
 					endif;
