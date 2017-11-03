@@ -1,5 +1,5 @@
 <h1 class="title title-main"><?=$title;?></h1>
-
+<hr/>
 <?if(isset($_GET['action']) && $_GET['action'] !== '' && $_GET['action'] !== 'delete'):?>
 
 <div class="b-form">
@@ -122,7 +122,7 @@
 	<?if($_GET['action'] === 'edit'):?>
 	<hr/>
 	<div class="b-ip">
-		<h3>Список подключенных IP <button class="btn btn-small btn-primary js-add-ip">Добавить IP</button></h3>
+		<h3>Подключенные IP <button class="btn btn-small btn-primary js-add-ip">Добавить IP</button></h3>
 		<table id="tbl-ip" class="tbl table table-striped table-hover">
 		<?if(count($listIP)):?>
 			<thead class="tbl__head">
@@ -152,7 +152,7 @@
 	</div>
 	<hr/>
 	<div class="b-vlan">
-		<h3>Список подключенных VLAN <button class="btn btn-small btn-primary js-add-vlan">Добавить VLAN</button></h3>
+		<h3>Подключенные VLAN <button class="btn btn-small btn-primary js-add-vlan">Добавить VLAN</button></h3>
 		<table id="tbl-vlan" class="tbl table table-striped table-hover">
 		<?if(count($listVLAN)):?>
 			<thead class="tbl__head">

@@ -8,8 +8,8 @@ class DBconfig {
 
     function DBconfig() {
         $this -> dbHost = 'localhost';
-        $this -> dbUserName = 'root';
-        $this -> dbUserPass = 'root';
-        $this -> dbName = 'dashboard';
+        $this -> dbUserName = 'mello7_it';
+        $this -> dbUserPass = 'DK2929vb1';
+        $this -> dbName = 'mello7_it';
     }
 }

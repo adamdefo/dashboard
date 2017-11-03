@@ -20,8 +20,9 @@ $(function() {
 		json.clientID = clientID; // добавляем UID клиента
 		makeRequest('POST', 'api/vlan.php', json).then(function (response) {
 			var res = JSON.parse(response);
-			//console.log(res);
-			if (!res.isExist) { // если такой записи в таблице нет, то вставляем
+			console.log(res);
+			alert(res.statusText);
+			if (!res['isExist']) { // если такой записи в таблице нет, то вставляем
 				// создаем новую строку
 				var tr = document.createElement('tr');
 				var td1 = document.createElement('td');
@@ -83,7 +84,7 @@ $(function() {
 		json.clientID = clientID; // добавляем UID клиента
 		makeRequest('POST', 'api/ip.php', json).then(function (response) {
 			var res = JSON.parse(response);
-			//console.log(res);
+			alert(res.statusText);
 			if (!res.isExist) { // если такой записи в таблице нет, то вставляем
 				// создаем новую строку
 				var tr = document.createElement('tr');
