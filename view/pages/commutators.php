@@ -1,5 +1,5 @@
-<h1><?=$title;?></h1>
-
+<h1 class="title title-main"><?=$title;?></h1>
+<hr/>
 <?if(isset($_GET['action']) && $_GET['action'] !== '' && $_GET['action'] !== 'delete'):?>
 
 <div class="b-form">
@@ -43,7 +43,7 @@
 							<option value="0">нет</option>
 							<?if(count($listCommutators)):?>
 								<?foreach($listCommutators as $commutator):?>
-								<option value="<?=$commutator['UID']?>" <?if($commutator['UID'] === $item['parent_ID']):?>selected<?endif;?>><?=$commutator['model']?></option>
+								<option value="<?=$commutator['UID']?>" <?if($commutator['UID'] === $item['parent_ID']):?>selected<?endif;?>><?=$commutator['UID']?></option>
 								<?endforeach;?>
 							<?endif;?>
 						</select>
@@ -71,12 +71,13 @@
 			</div>
 			<div class="col col-2">
 				<div class="form__group row">
-					<?if($_GET['action'] !== 'add'):?>
+
 					<div class="col col-12">
 						<label>UID</label>
-						<input class="form-control" type="text" value="<?=$item['UID']?>" disabled />
-						<input class="form-control" name="UID" type="hidden" value="<?=$item['UID']?>" />
+						<input class="form-control" <?if($_GET['action'] === 'add'):?>name="UID"<?endif;?> type="text" value="<?=$item['UID']?>" <?if($_GET['action'] === 'edit'):?>disabled<?endif;?> />
+	<?if($_GET['action'] === 'edit'):?><input class="form-control" name="UID" type="hidden" value="<?=$item['UID']?>" /><?endif;?>
 					</div>
+					<?if($_GET['action'] !== 'add'):?>
 					<?endif?>
 				</div>
 				<div class="form__group row">

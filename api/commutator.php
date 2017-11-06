@@ -20,6 +20,7 @@ if(isset($_GET['action'])):
 endif;
 
 if($action === 'add' || $action === 'edit'):
+	$UID = $_POST['UID'];
 	$model = $_POST['model'];
 	$adress = $_POST['adress'];
 	$ip = $_POST['ip'];
@@ -33,7 +34,6 @@ if($action === 'add' || $action === 'edit'):
 	$note = $_POST['note'];
 	$note_open = $_POST['note_open'];
 	$comment = $_POST['comment'];
-	$date_created = date('Y-m-d H:i:s');
 endif;
 
 function GetGenerateVLAN($commutator, $port, $segment) {
@@ -44,31 +44,27 @@ function GetGenerateVLAN($commutator, $port, $segment) {
 $sqlQuery = "";
 switch($action) {
 	case('add'):
-		$countUniqueItems = $DB -> GetCountUniqueItems('COMMUTATORS');
-		$UID = ++$countUniqueItems[0]['quantity'];
-		$date_last_update = $date_created;
-		$sqlQuery = $insert." VALUES ('$UID','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$countPorts','$status_ID','$note','$note_open','$comment','$date_created','$date_last_update')";
-		if(!is_null($parent_ID)) {
-			$port = 1;
-			while($port < $countPorts) {
-				$countUniqueVLAN = $DB -> GetCountUniqueItems('VLAN');
-				$uidVLAN = ++$countUniqueVLAN[0]['quantity'];
-				$vlan = GetGenerateVLAN($parent_ID, $port, $segment);
-				$dateCreatedVLAN = date('Y-m-d H:i:s');
-				$dateLastUpdateVLAN = $dateCreatedVLAN;
-				$sqlQueryVLAN = "INSERT INTO VLAN (UID,value,speed,status,date_created,date_last_update,client_ID) 
-				VALUES ('$uidVLAN','$vlan',0,0,'$dateCreatedVLAN','$dateLastUpdateVLAN',0)";
-				$DB -> ExecuteQuery($sqlQueryVLAN);
-				$port++;
-			}
-		}
+		$date_created = date('Y-m-d H:i:s');
+		$sqlQuery = $insert." VALUES ('$UID','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$countPorts','$status_ID','$note','$note_open','$comment','$date_created','$date_created')";
+//		if(!is_null($parent_ID)) {
+//			$port = 1;
+//			while($port < $countPorts) {
+//				$countUniqueVLAN = $DB -> GetCountUniqueItems('VLAN');
+//				$uidVLAN = ++$countUniqueVLAN[0]['quantity'];
+//				$vlan = GetGenerateVLAN($parent_ID, $port, $segment);
+//				$dateCreatedVLAN = date('Y-m-d H:i:s');
+//				$dateLastUpdateVLAN = $dateCreatedVLAN;
+//				$sqlQueryVLAN = "INSERT INTO VLAN (UID,value,speed,status,date_created,date_last_update,client_ID)
+//				VALUES ('$uidVLAN','$vlan',0,0,'$dateCreatedVLAN','$dateLastUpdateVLAN',0)";
+//				$DB -> ExecuteQuery($sqlQueryVLAN);
+//				$port++;
+//			}
+//		}
 	break;
 	case('edit'):
-		$UID = $_POST['UID'];
+		$date_created = $_POST['date_created'];
 		$date_last_update = date('Y-m-d H:i:s');
 		$sqlQuery = $insert." VALUES ('$UID','$model','$adress','$ip','$segment','$firmware','$parent_ID','$parent_PORT','$connection_type_ID','$countPorts','$status_ID','$note','$note_open','$comment','$date_created','$date_last_update')";
-	
-
 	break;
 	case('delete'):
 		$sqlQuery = "DELETE FROM COMMUTATORS WHERE id='$id'";
@@ -78,5 +74,5 @@ switch($action) {
 	break;
 }
 
-//$data = $DB -> ExecuteQuery($sqlQuery);
-//echo $data ? '<html><head><meta http-equiv="Refresh" content="0; URL=../index.php?view=commutators"></head></html>' : 'fail';
+$data = $DB -> ExecuteQuery($sqlQuery);
+echo $data ? '<html><head><meta http-equiv="Refresh" content="0; URL=../index.php?view=commutators"></head></html>' : 'fail';

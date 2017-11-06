@@ -57,8 +57,8 @@
 						<label>Исполнитель</label>
 						<select class="form-control" name="user_ID">
 							<option value="0">не назначен</option>
-							<?foreach($implementers as $impl):?>
-							<option value="<?=$impl['id']?>" <?if($impl['id'] === $item['user_ID']):?>selected<?endif;?>><?=$impl['id']?></option>
+							<?foreach($listUsers as $user):?>
+							<option value="<?=$user['id']?>" <?if($user['id'] === $item['user_ID']):?>selected<?endif;?>><?=$user['fio']?></option>
 							<?endforeach;?>
 						</select>
 					</div>

@@ -1,5 +1,5 @@
 <h1 class="title title-main"><?=$title;?></h1>
-
+<hr/>
 <?if(isset($_GET['action']) && $_GET['action'] !== '' && $_GET['action'] !== 'delete'):?>
 
 <div class="b-form">
@@ -32,7 +32,7 @@
 						<select class="form-control" name="vlan_ID">
 							<option value="0">нет</option>
 							<?foreach($VLAN as $vl):?>
-							<option value="<?=$vl['UID']?>" <?if($vl['UID'] === $item['vlan_ID']):?>selected<?endif;?>><?=$vl['value']?></option>
+							<option value="<?=$vl['UID']?>" <?if($vl['UID'] === $item['vlan_ID']):?>selected<?endif;?>><?='UID'.$vl['UID'].': '.$vl['value']?></option>
 							<?endforeach;?>
 						</select>
 					</div>
@@ -52,7 +52,7 @@
 
 				<div class="form__group row">
 					<div class="col col-12">
-						<input id="status" type="checkbox" value="1" name="status" <?if($item['status'] > 0): echo 'checked'; endif;?> />
+						<input id="status" type="checkbox" value="on" name="status" <?if($item['status'] === 'on'): echo 'checked'; endif;?> />
 						<label class="label-normal" for="status">подключен</label>
 					</div>
 				</div>
@@ -73,6 +73,38 @@
 			</div>
 		</div>
 	</form>
+	<?
+	$listIP = $DB->GetListItems('IP_ADRESS','date_last_update','ASC','UID',$item['UID']);
+//	foreach($listIP as $ip) {
+//		echo gettype($ip['status']).'<br/>';
+//	}
+	if(count($listIP) > 1):
+	?>
+	<div class="b-history">
+		<h2>История измений</h2>
+		<table class="table table-striped table-hover">
+		<?
+		$j = 1;
+		for($i = 0; $i < count($listIP); $i++) {
+			if ($j < count($listIP)) {
+				$diffArr = array_diff($listIP[$i], $listIP[$j]); // получаю различия между записями
+				$keysOfDiffArr = array_keys($diffArr); // получаю ключи массива с различиями
+				foreach ($keysOfDiffArr as $key => $keyValue):
+					if (gettype($keyValue) !== 'integer' && $keyValue != 'id' && $keyValue != 'date_last_update'): // проверяем, что ключи не id и не дата изменения
+						if (array_key_exists($keyValue, $diffArr)): // проверяю наличие ключа в массиве
+							if($keyValue === 'client_ID'):
+								echo '<tr><td><span class="badge badge-info">' . $listIP[$j]['date_last_update'] . '</span> изменился ' . $keyValue . ' c <b>' . $listIP[$i][$keyValue] . '</b> на <b>' . $listIP[$j][$keyValue] . '</b></td>';
+							endif;
+						endif;
+					endif;
+				endforeach;
+				$j++;
+			}
+		}
+		?>
+		</table>
+	</div>
+	<?endif?>
 </div>
 
 <?else:?>
@@ -88,8 +120,8 @@
 				<th>Статус</th>
 				<th>ID клиента</th>
 				<th>VLAN</th>
-				<th>Cоздан</th>
-				<th>Обновлен</th>
+				<th>Дата создания</th>
+				<th>Дата изменения</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -101,7 +133,7 @@
 				</td>
 				<td><a href="index.php?view=ip_adress&action=edit&id=<?=$item['id'];?>"><?=$item['ip']?></a></td>
 				<td><?=$item['speed']?></td>
-				<td><span class="badge badge-<?=$item['status'] == 0 ? 'important' : 'success'?>"><?=$item['status'] == 0 ? 'Отключен' : 'Подключен'?></span></td>
+				<td><span class="badge badge-<?=$item['status'] === 'off' ? 'important' : 'success'?>"><?=$item['status'] === 'off' ? 'Отключен' : 'Подключен'?></span></td>
 				<td><?=$item['client_ID']?></td>
 				<td><?=$item['vlan_ID']?></td>
 				<td><?=$item['date_created']?></td>

@@ -1,4 +1,5 @@
 <?php
+
 require('../db/DB.php');
 $DB = new DB();
 $tbl = 'IP_ADRESS';
@@ -20,14 +21,14 @@ $sqlQuery = "";
 switch($action) {
 	case('add'):
 		$listIP = $DB -> GetListItems($tbl,'date_last_update','DESC','ip',$ip);
-		$countUniqueItems = $DB -> GetCountUniqueItems('IP');
+		$countUniqueItems = $DB -> GetCountUniqueItems($tbl);
 		// проверка, есть ли такой IP
 		if(count($listIP)): // ecли есть
 			if(!$listIP[0]['status']):
-				$data->UID = $listIP[0]['UID'];
+				$UID = $listIP[0]['UID'];
 				$date_created = $listIP[0]['date_created'];
 				$date_last_update = date('Y-m-d H:i:s');
-				$sqlQuery = $insert." VALUES ('$data->UID','$ip','$data->speed',1,'$date_created','$date_last_update','$vlanID','$clientID')";
+				$sqlQuery = $insert." VALUES ('$UID','$ip','$data->speed','on','$date_created','$date_last_update','$vlanID','$clientID')";
 				$data->statusText = 'IP привязан к клиенту '.$clientID;
 			else: // иначе выведем сообщение у какого клиента этот IP
 				$update = false;
@@ -37,7 +38,7 @@ switch($action) {
 		else: // иначе создаем новый IP
 			$UID = ++$countUniqueItems[0]['quantity'];
 			$date_last_update = $date_created;
-			$sqlQuery = $insert." VALUES ('$UID','$ip','$data->speed',1,'$date_created','$date_last_update','$vlanID','$clientID')";
+			$sqlQuery = $insert." VALUES ('$UID','$ip','$data->speed','on','$date_created','$date_last_update','$vlanID','$clientID')";
 			$data->statusText = 'IP добавлен.';
 		endif;
 	break;
@@ -48,7 +49,7 @@ switch($action) {
 		$speed = $listIP[0]['speed'];
 		$date_created = $listIP[0]['date_created'];
 		$date_last_update = date('Y-m-d H:i:s');
-		$sqlQuery = $insert." VALUES ('$data->UID','$ip','$speed',0,'$date_created','$date_last_update','$vlanID','$clientID')";
+		$sqlQuery = $insert." VALUES ('$data->UID','$ip','$speed','off','$date_created','$date_last_update','$vlanID','$clientID')";
 		$data->statusText = 'IP отключен.';
 	break;
 	case('delete'):

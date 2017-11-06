@@ -35,7 +35,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</a>
-						<a class="brand" href="#">Мониторинг</a>
+						<a class="brand" href="/">Мониторинг</a>
 						<div class="nav-collapse collapse">
 							<ul class="nav">
 								<?foreach($mainMenu as $link):?>
@@ -54,11 +54,16 @@
 									</ul>
 								</li>
 							</ul>
-							<!-- <form class="navbar-form pull-right">
-								<input class="span2" type="text" name="login" placeholder="Логин">
-								<input class="span2" type="password" name="password" placeholder="Пароль">
-								<button type="submit" class="btn btn-primary">Войти</sup>
-							</form> -->
+						</div>
+						<div class="navbar-user">
+							<ul class="nav">
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$Auth->user['fio']?> <b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li><a href="auth/logout.php">Выйти</a></li>
+									</ul>
+								</li>
+							</ul>
 						</div>
 					</div>
 				</div>

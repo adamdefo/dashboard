@@ -11,6 +11,15 @@
 	margin-top: 0;
 }
 
+.navbar-user {
+	color: #ffffff;
+	float: right;
+}
+
+.navbar-user .nav {
+	margin-right: 0;
+}
+
 .form__group, .row {
 	margin: 0 -15px;
 }
@@ -114,6 +123,19 @@
 	position: relative;
 	/* display: inline-block; */
 	max-width: 1200px;
+}
+
+.form {
+	width: 100%;
+}
+
+.form-authorization {
+	margin: 50px auto;
+	max-width: 320px;
+}
+
+.form__inner {
+	padding: 0 15px;
 }
 
 label {
