@@ -62,12 +62,12 @@ class DB extends DBconfig {
 		return $arr;
 	}
 	
-	public function GetListItems($tbl, $order_field='id', $order_type='ASC', $filter_field, $filter_value, $start=0, $limit=null) {
-		if($filter_field === null):
+	public function GetListItems($tbl, $order_field='id', $order_type='ASC', $filter_field, $filter_value, $start=0, $limit) {
+		if(is_null($filter_field)):
 			 $this -> sqlQuery = "SELECT * FROM $tbl ORDER BY $order_field $order_type";
 		else:
-			if($limit == null) {
-				$this -> sqlQuery = "SELECT * FROM $tbl WHERE $filter_field=$filter_value ORDER BY $order_field $order_type";
+			if(is_null($limit)) {
+				$this -> sqlQuery = "SELECT * FROM $tbl WHERE $filter_field='$filter_value' ORDER BY $order_field $order_type";
 			} else {
 				$this -> sqlQuery = "SELECT * FROM $tbl WHERE $filter_field=$filter_value ORDER BY $order_field $order_type LIMIT $start, $limit";
 			}

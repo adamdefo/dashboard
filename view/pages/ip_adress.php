@@ -76,7 +76,7 @@
 	<?
 	$listIP = $DB->GetListItems('IP_ADRESS','date_last_update','ASC','UID',$item['UID']);
 //	foreach($listIP as $ip) {
-//		echo gettype($ip['status']).'<br/>';
+//		echo gettype($ip['client_ID']).'<br/>';
 //	}
 	if(count($listIP) > 1):
 	?>
@@ -84,16 +84,21 @@
 		<h2>История измений</h2>
 		<table class="table table-striped table-hover">
 		<?
+		echo '<tr><td><span class="badge badge-info">' . $listIP[0]['date_last_update'] . '</span> подключен к клиенту <b>' . $listIP[0]['client_ID'] . '</b></td>';
 		$j = 1;
 		for($i = 0; $i < count($listIP); $i++) {
 			if ($j < count($listIP)) {
 				$diffArr = array_diff($listIP[$i], $listIP[$j]); // получаю различия между записями
 				$keysOfDiffArr = array_keys($diffArr); // получаю ключи массива с различиями
 				foreach ($keysOfDiffArr as $key => $keyValue):
-					if (gettype($keyValue) !== 'integer' && $keyValue != 'id' && $keyValue != 'date_last_update'): // проверяем, что ключи не id и не дата изменения
+					if (gettype($keyValue) !== 'integer' && $keyValue != 'id' && $keyValue != 'date_last_update' && $keyValue != 'speed'): // проверяем, что ключи не id и не дата изменения и скорость
 						if (array_key_exists($keyValue, $diffArr)): // проверяю наличие ключа в массиве
-							if($keyValue === 'client_ID'):
-								echo '<tr><td><span class="badge badge-info">' . $listIP[$j]['date_last_update'] . '</span> изменился ' . $keyValue . ' c <b>' . $listIP[$i][$keyValue] . '</b> на <b>' . $listIP[$j][$keyValue] . '</b></td>';
+							if($keyValue === 'client_ID' && $listIP[$j]['client_ID'] != 0):
+								echo '<tr><td><span class="badge badge-info">' . $listIP[$j]['date_last_update'] . '</span> подключен к клиенту <b>' . $listIP[$j]['client_ID'] . '</b></td>';
+							elseif($keyValue === 'status' && $listIP[$j]['status'] === 'off'):
+								echo '<tr><td><span class="badge badge-info">' . $listIP[$j]['date_last_update'] . '</span> отключен у клиента <b>' . $listIP[$j]['client_ID'] . '</b></td>';
+							elseif($keyValue === 'status' && $listIP[$j]['status'] === 'on'):
+								echo '<tr><td><span class="badge badge-info">' . $listIP[$j]['date_last_update'] . '</span> подключен к клиенту <b>' . $listIP[$j]['client_ID'] . '</b></td>';
 							endif;
 						endif;
 					endif;

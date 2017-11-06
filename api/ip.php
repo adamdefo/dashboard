@@ -42,7 +42,7 @@ switch($action) {
 			$data->statusText = 'IP добавлен.';
 		endif;
 	break;
-	case('edit'): // отключение VLAN
+	case('edit'): // отключение IP
 		$listIP = $DB -> GetListItems($tbl,'date_last_update','DESC','UID',$data->UID);
 		$ip = $listIP[0]['ip'];
 		$vlanID = $listIP[0]['vlan_ID'];
