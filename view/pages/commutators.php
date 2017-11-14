@@ -120,54 +120,14 @@
 
 <?else:?>
 
-<div class="b-table">
 	<a href="index.php?view=commutators&action=add" class="btn btn-primary">Создать</a>
-	<table class="table table-striped table-hover">
-		<thead>
-			<tr>
-				<th>UID</th>
-				<th>Модель</th>
-				<th>IP</th>
-				<th>Прошивка</th>
-				<th>Адрес</th>
-				<th>Род. коммутатор</th>
-				<th>Сегмент</th>
-				<th>Тип подключения</th>
-				<th>Кол-во портов</th>
-				<th>Статус</th>
-				<th>Примечание</th>
-				<th>Откр. примечание</th>
-				<th>Комментарий</th>
-				<th>Создан</th>
-				<th>Обновлен</th>
-			</tr>
-		</thead>
-		<tbody>
-		<?foreach($items as $item):?>
-			<tr>
-				<td>
-					<a href="index.php?view=commutators&action=edit&id=<?=$item['id'];?>"><?=$item['UID'];?></a>
-					<a href="index.php?view=commutators&action=edit&id=<?=$item['id'];?>" class="btn btn-small btn-primary">Изменить</a>
-					<!-- <a href="api/commutator.php?action=delete&id=<?=$item['id'];?>" class="btn btn-small btn-danger">Удалить</a> -->
-				</td>
-				<td><?=$item['model']?></td>
-				<td><?=$item['ip']?></td>
-				<td><?=$item['firmware']?></td>
-				<td><?=$item['adress']?></td>
-				<td><?=is_null($item['parent_ID']) ? 'нет' : $item['parent_ID'];?></td>
-				<td><?=$item['segment']?></td>
-				<td><?=$item['connection_type_ID']?></td>
-				<td><?=$item['count_client_ports']?></td>
-				<td><?=$item['status_ID']?></td>
-				<td><?=$item['note']?></td>
-				<td><?=$item['note_open']?></td>
-				<td><?=$item['comment']?></td>
-				<td><?=$item['date_created']?></td>
-				<td><?=$item['date_last_update']?></td>
-			</tr>
-		<?endforeach;?>
-		</tbody>
-	</table>
-</div>
+
+	<?
+		echo '<ul class="commutators-tree">';
+		$commutatorsTree->outTree(0, 0);
+		echo '</ul>';
+	?>
 
 <?endif;?>
+
+<script src="app/commutators.js"></script>

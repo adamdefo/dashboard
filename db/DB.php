@@ -73,8 +73,7 @@ class DB extends DBconfig {
 			}
 		endif;
 
-		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
-		return $this -> FetchDataInArray($data);
+		return $this -> FetchDataInArray($this -> ExecuteQuery($this -> sqlQuery));
 	}
 
 	/** 
@@ -83,14 +82,13 @@ class DB extends DBconfig {
 	 * $field_date - поле с датой, по которой будет выбираться самая актуальная запись
 	 */
 	public function GetGroupedListItems($tbl, $uid = 'UID', $field_date = 'date_last_update') {
-		$this -> sqlQuery = "SELECT * FROM $tbl AS res, 
+		$sqlQuery = "SELECT * FROM $tbl AS res,
 		(SELECT $uid, MAX($field_date) AS date FROM $tbl 
 		GROUP BY $uid) AS res2 
 		WHERE res.$uid = res2.$uid AND res.$field_date = res2.date 
 		ORDER BY id DESC";
 
-		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
-		return $this -> FetchDataInArray($data);
+		return $this -> FetchDataInArray($this -> ExecuteQuery($sqlQuery));
 	}
 
 	/** 
@@ -133,10 +131,41 @@ class DB extends DBconfig {
 	* $tbl - имя таблицы
 	*/
 	public function GetCountItems($tbl) {	
-		$this -> sqlQuery = "SELECT COUNT(*) FROM $tbl";
-
-		$data = mysql_query($this -> sqlQuery, $this -> CreateConnect());
+		$sqlQuery = "SELECT COUNT(*) FROM $tbl";
+		$data = $this -> ExecuteQuery($sqlQuery);
 		return mysql_fetch_array($data);
+	}
+
+	/**
+	 * @param $ip - значение ip
+	 * @param $clientID - UID клиента
+	 * @param $vlanID - UID vlan
+	 * @param $status (on/off)
+	 * @return array
+	 */
+	public function FindClientIP($ip, $clientID, $vlanID, $status) {
+		if(is_null($status)):
+			$sqlQuery = "SELECT * FROM IP_ADRESS WHERE ip = '$ip' AND client_ID = '$clientID' AND vlan_ID = '$vlanID'";
+		else:
+			$sqlQuery = "SELECT * FROM IP_ADRESS WHERE ip = '$ip' AND client_ID = '$clientID' AND vlan_ID = '$vlanID' AND status = '$status'";
+		endif;
+
+		return $this -> FetchDataInArray($this -> ExecuteQuery($sqlQuery));
+	}
+
+	/** Получает список активных ip привязанных к порту клиента, необходимо при отключение всех ip при отключение порта у клиента
+	 * @param $clientID - UID клиента
+	 * @param $vlanID - UID vlan
+	 * @param $status (on/off)
+	 * @return array
+	 */
+	public function GetListActiveIpByVlan($vlanID, $clientID, $status = 'on') {
+		$sqlQuery = "SELECT * FROM IP_ADRESS AS all_ip,
+(SELECT UID, MAX(date_last_update) AS date FROM IP_ADRESS
+GROUP BY UID) AS ip_last_update
+WHERE all_ip.UID = ip_last_update.UID AND all_ip.date_last_update = ip_last_update.date AND all_ip.vlan_ID = ".$vlanID." AND all_ip.client_ID = ".$clientID." AND all_ip.status = '$status' ORDER BY id DESC";
+
+		return $this -> FetchDataInArray($this -> ExecuteQuery($sqlQuery));
 	}
 
 	/** Выполняет любой запрос

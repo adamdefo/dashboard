@@ -119,9 +119,49 @@
 	width: 100%;
 }
 
+.commutators-tree {
+	margin: 20px 0 20px 15px;
+}
+
+.commutators-tree__table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.commutators-tree__table td{
+	padding: 5px;
+}
+
+.commutators-tree__tr {
+	font-size: .78em;
+	font-weight: bold;
+	border-bottom: 1px solid #dedede;
+}
+
+.commutators-tree__btn {
+	margin-left: 10px;
+}
+
+.commutators-tree__info {
+	background-color: #eeeeee;
+	display: none;
+	opacity: 0;
+	font-size: .78em;
+	margin-bottom: 10px;
+	padding: 8px 10px;
+
+}
+.commutators-tree__info._show {
+	display: block;
+	opacity: 1;
+}
+
+.commutators-tree__info p {
+	line-height: 1.2;
+}
+
 .b-form {
 	position: relative;
-	/* display: inline-block; */
 	max-width: 1200px;
 }
 
@@ -154,6 +194,10 @@ input[type="text"], input[type="password"] {
 
 .textarea {
 	resize: none;
+}
+
+.tree__table {
+	font-size: .92em;
 }
 
 /* модалка */

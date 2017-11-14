@@ -2,7 +2,8 @@
 
 session_start();
 
-include('settings.php');
+include_once('settings.php');
+include_once('additional/additional.php');
 
 require('db/DB.php');
 $DB = new DB();
@@ -36,7 +37,7 @@ if($Auth->isLoggedIn()):
 
 				$listObjects = $DB -> FetchDataInArray($DB -> ExecuteQuery($queryGetListObjects));
 
-				$queryGetListUsers = "SELECT * FROM USERS AS cln WHERE role_ID = 3 AND is_active = 1";
+				$queryGetListUsers = "SELECT * FROM USERS AS users WHERE role_ID = 3 AND is_active = 1";
 				$listUsers = $DB -> FetchDataInArray($DB -> ExecuteQuery($queryGetListUsers));
 
 				switch($_GET['action']) {
@@ -82,17 +83,24 @@ if($Auth->isLoggedIn()):
 							$title = 'Обновление клиента '.$item['full_name'];
 							// список подключенных VLAN
 							$query = "SELECT * FROM VLAN AS res,
-							(SELECT UID, MAX(date_last_update) AS date FROM VLAN
-							GROUP BY UID) AS res2
-							WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.status != 0 AND res.client_ID = $item[UID]
-							ORDER BY id DESC";
+(SELECT UID, MAX(date_last_update) AS date FROM VLAN GROUP BY UID) AS res2
+WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.status != 'off' AND res.client_ID = ".$item['UID']." ORDER BY id DESC";
 							$listVLAN = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
+							// список доступных IP для модалки
+							$queryFreeIP = "SELECT * FROM IP_ADRESS AS res,
+(SELECT UID, MAX(date_last_update) AS date FROM IP_ADRESS GROUP BY UID) AS res2
+WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.status = 'off' ORDER BY id DESC";
+							$listFreeIP = $DB -> FetchDataInArray($DB -> ExecuteQuery($queryFreeIP));
 							// список подключенных IP
-							$queryIP = "SELECT * FROM IP_ADRESS AS res,
-							(SELECT UID, MAX(date_last_update) AS date FROM IP_ADRESS
-							GROUP BY UID) AS res2
-							WHERE res.UID = res2.UID AND res.date_last_update = res2.date AND res.status != 'off' AND res.client_ID = $item[UID]
-							ORDER BY id DESC";
+							$queryIP = "SELECT ip.UID, ip.ip, ip.status, ip.vlan_ID, vlan.value, clients.full_name, ip.speed FROM
+(SELECT UID, ip, status, vlan_ID, client_ID, speed FROM IP_ADRESS AS res,
+ (SELECT UID as uid2, MAX(date_last_update) AS date_update FROM IP_ADRESS
+  GROUP BY UID) AS res2
+ WHERE res.UID = res2.uid2 AND res.date_last_update = res2.date_update AND res.status = 'on' AND res.client_ID = ".$item['UID']." ORDER BY id DESC) as ip
+ INNER JOIN (SELECT value, UID as vlan_ID, MAX(date_last_update) FROM VLAN
+  GROUP BY vlan_ID) as vlan ON ip.vlan_ID = vlan.vlan_ID
+ INNER JOIN (SELECT full_name, UID, MAX(date_last_update) FROM CLIENTS
+  GROUP BY UID) as clients ON ip.client_ID = clients.UID";
 							$listIP = $DB -> FetchDataInArray($DB -> ExecuteQuery($queryIP));
 						else:
 							$item = $DB -> GetItem('CLIENTS', 1);
@@ -102,6 +110,22 @@ if($Auth->isLoggedIn()):
 			else:
 				$items = $DB -> GetGroupedListItems('CLIENTS');
 			endif;
+		break;
+
+		case('test'):
+			$query = "SELECT ip.UID, ip.ip, ip.status, vlan.value, clients.full_name, ip.speed FROM
+(SELECT UID, ip, status, vlan_ID, client_ID, speed FROM IP_ADRESS AS res,
+ (SELECT UID as uid2, MAX(date_last_update) AS date_update FROM IP_ADRESS
+  GROUP BY UID) AS res2
+ WHERE res.UID = res2.uid2 AND res.date_last_update = res2.date_update AND res.status = 'on' AND res.client_ID = 1 ORDER BY id DESC) as ip
+ INNER JOIN (SELECT value, UID, MAX(date_last_update) FROM VLAN
+  GROUP BY UID) as vlan ON ip.vlan_ID = vlan.UID
+ INNER JOIN (SELECT full_name, UID, MAX(date_last_update) FROM CLIENTS
+  GROUP BY UID) as clients ON ip.client_ID = clients.UID";
+			$list = $DB -> FetchDataInArray($DB -> ExecuteQuery($query));
+			echo '<pre>';
+			print_r($list);
+			echo '</pre>';
 		break;
 
 		case('commutators'):
@@ -139,7 +163,8 @@ if($Auth->isLoggedIn()):
 					break;
 				}
 			else:
-				$items = $DB -> GetGroupedListItems('COMMUTATORS');
+				require('db/CommutatorsTree.php');
+				$commutatorsTree = new CommutatorsTree();
 			endif;
 		break;
 

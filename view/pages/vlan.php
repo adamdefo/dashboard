@@ -43,7 +43,7 @@
 
 				<div class="form__group row">
 					<div class="col col-12">
-						<input id="status" type="checkbox" value="1" name="status" <?if($item['status'] > 0): echo 'checked'; endif;?> />
+						<input id="status" type="checkbox" value="onn" name="status" <?if($item['status'] === 'on'): echo 'checked'; endif;?> />
 						<label class="label-normal" for="status">подключен</label>
 					</div>
 				</div>
@@ -91,7 +91,7 @@
 				</td>
 				<td><a href="index.php?view=vlan&action=edit&id=<?=$item['id'];?>"><?=$item['value']?></a></td>
 				<td><?=$item['speed']?></td>
-				<td><span class="badge badge-<?=$item['status'] == 0 ? 'important' : 'success'?>"><?=$item['status'] == 0 ? 'Отключен' : 'Подключен'?></span></td>
+				<td><span class="badge badge-<?=$item['status'] === 'off' ? 'important' : 'success'?>"><?=$item['status'] === 'off' ? 'Отключен' : 'Подключен'?></span></td>
 				<td><?=$item['client_ID']?></td>
 				<td><?=$item['date_created']?></td>
 				<td><?=$item['date_last_update']?></td>

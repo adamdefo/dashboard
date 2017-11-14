@@ -28,7 +28,6 @@ if($action === 'add' || $action === 'edit'):
 	$clientID = $_POST['client_ID'];
 	$vlanID = $_POST['vlan_ID'];
 	$date_created = $_POST['date_created'];
-	$status = is_null($_POST['status']) ? 'off' : $_POST['status'];
 endif;
 
 $sqlQuery = "";
@@ -37,10 +36,11 @@ switch($action) {
 		$countUniqueItems = $DB -> GetCountUniqueItems($tbl);
 		$UID = ++$countUniqueItems[0]['quantity'];
 		$date_last_update = $date_created;
-		$sqlQuery = $insert." VALUES ('$UID','$ip','$speed','$status','$date_created','$date_last_update','$vlanID','$clientID')";
+		$sqlQuery = $insert." VALUES ('$UID','$ip','$speed','off','$date_created','$date_last_update','$vlanID','$clientID')";
 	break;
 	case('edit'):
 		$UID = $_POST['UID'];
+		$status = $_POST['status'];
 		$date_last_update = date('Y-m-d H:i:s');
 		$sqlQuery = $insert." VALUES ('$UID','$ip','$speed','$status','$date_created','$date_last_update','$vlanID','$clientID')";
 	break;

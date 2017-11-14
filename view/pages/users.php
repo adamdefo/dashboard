@@ -1,5 +1,5 @@
 <h1 class="title title-main"><?=$title;?></h1>
-
+<hr/>
 <?if(isset($_GET['action']) && $_GET['action'] !== '' && $_GET['action'] !== 'delete'):?>
 
 <div class="b-form">

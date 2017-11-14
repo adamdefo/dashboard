@@ -121,25 +121,28 @@
 				</div>
 				<div class="modal-container">
 					<div class="modal-note"></div>
+					<?if(count($listVLAN)):?>
 					<form id="form-ip" class="form">
 						<div class="form__group row">
 							<div class="col col-12">
 								<label>IP</label>
-								<input class="form-control" name="ip" type="text" value="" />
+								<select class="form-control" name="ip">
+									<?foreach($listFreeIP as $ip):?>
+										<?if(!CheckDefaultIp($ip['ip'])):?>
+										<option value="<?=$ip['ip']?>"><?=$ip['ip']?></option>
+										<?endif;?>
+									<?endforeach;?>
+								</select>
 							</div>
 						</div>
 						<div class="form__group row">
 							<div class="col col-12">
-								<?if(count($listVLAN)):?>
 								<label>VLAN</label>
 								<select class="form-control" name="vlanID">
 									<?foreach($listVLAN as $vlan):?>
 									<option value="<?=$vlan['UID']?>"><?=$vlan['value']?></option>
 									<?endforeach;?>
 								</select>
-								<?else:?>
-								<p>У клиента нет VLAN, сначала <a class="js-add-vlan">добавьте VLAN</a></p>
-								<?endif;?>
 							</div>
 						</div>
 						<div class="form__group row">
@@ -154,6 +157,9 @@
 							</div>
 						</div>
 					</form>
+					<?else:?>
+						<p>У клиента нет VLAN, сначала добавьте VLAN</p>
+					<?endif;?>
 				</div>
 			</div>
 		</div>

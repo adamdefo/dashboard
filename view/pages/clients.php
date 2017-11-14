@@ -128,23 +128,27 @@
 			<thead class="tbl__head">
 				<tr>
 					<th>IP</th>
+					<th>VLAN</th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody class="tbl__body">
 				<?foreach($listIP as $ip):?>
-				<tr>
-					<td><?=$ip['ip']?></td>
-					<td class="text-right">
-						<button type="button" class="btn btn-small btn-danger js-off-ip" data-uid="<?=$ip['UID']?>">Отключить</button>
-					</td>
-				</tr>
+					<?if(!CheckDefaultIp($ip['ip'])):?>
+					<tr data-vlan="<?=$ip['vlan_ID']?>">
+						<td><?=$ip['ip']?></td>
+						<td><?=$ip['value']?></td>
+						<td class="text-right">
+							<button type="button" class="btn btn-small btn-danger js-off-ip" data-uid="<?=$ip['UID']?>">Отключить</button>
+						</td>
+					</tr>
+					<?endif;?>
 				<?endforeach;?>
 			</tbody>
 		<?else:?>
 			<tbody class="tbl__body">
 				<tr class="tr-null">
-					<td colspan="2"><p>Ни одного IP не подключено</p></td>
+					<td colspan="3"><p>Ни одного IP не подключено</p></td>
 				</tr>
 			</tbody>
 		<?endif;?>
@@ -182,6 +186,32 @@
 	</div>
 	<?endif;?>
 </div>
+
+<?php
+if($_GET['action'] === 'edit'):
+	$queryGetListIp = "SELECT * FROM IP_ADRESS WHERE client_ID=".$item['UID'];
+	$getListIp = $DB->FetchDataInArray($DB->ExecuteQuery($queryGetListIp));
+?>
+<hr/>
+<div class="b-history">
+	<h3>История измений</h3>
+	<table class="table table-striped table-hover">
+		<?
+//		$arr = ['1', '2', '3', '4', '5'];
+//		for($i = 0; $i < count($getListIp); $i++) {
+		if(count($getListIp) > 1):
+			foreach($getListIp as $ip) {
+				if($ip['status'] === 'on'):
+					echo '<tr><td><b>'.$ip['ip'].'</b> <span class="badge badge-success">подключен</span> <b>'.$ip['date_last_update'].'</b></td>';
+				else:
+					echo '<tr><td><b>'.$ip['ip'].'</b> <span class="badge badge-important">отключен</span> <b>'.$ip['date_last_update'].'</b></td>';
+				endif;
+			}
+		endif;
+		?>
+	</table>
+</div>
+<?endif;?>
 
 <?if($_GET['action'] === 'edit'):?>
 <script src="app/clients.js"></script>
